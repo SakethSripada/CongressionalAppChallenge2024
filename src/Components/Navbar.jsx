@@ -37,7 +37,6 @@ const Navbar = () => {
     }
   };
 
-  // Zip code input handler
   const handleZipCodeChange = (event) => {
     setZipCode(event.target.value);
   };
@@ -74,10 +73,10 @@ const Navbar = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose} component={Link} to="/link1">Link 1</MenuItem>
-          <MenuItem onClick={handleMenuClose} component={Link} to="/link2">Link 2</MenuItem>
-          <MenuItem onClick={handleMenuClose} component={Link} to="/link3">Link 3</MenuItem>
-          <MenuItem onClick={handleMenuClose} component={Link} to="/link4">Link 4</MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/">Home</MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/local">Local</MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/state">State</MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/national">National</MenuItem>
         </Menu>
 
         <IconButton 
