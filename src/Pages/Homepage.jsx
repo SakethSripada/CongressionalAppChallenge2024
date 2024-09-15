@@ -6,7 +6,7 @@ const Homepage = () => {
     <Container>
       <Box sx={{ textAlign: 'center', paddingTop: '50px' }}>
         <Typography variant="h2" component="h1" gutterBottom>
-          Welcome to the Politics Platform
+          Voting App
         </Typography>
         <Typography variant="h6" color="textSecondary" paragraph>
           Stay updated with the latest election information, political news, and voting locations.
