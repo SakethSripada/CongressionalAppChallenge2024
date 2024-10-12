@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Link } from 'react-router-dom';
@@ -56,8 +56,14 @@ const Navbar = () => {
   return (
     <AppBar position="fixed" className="navbar">
       <Toolbar>
+      <Box component="img" 
+             src="/navbarlogo.png" // Update the path to your logo
+             alt="Logo"
+             sx={{ height: '60px', marginRight: '16px' }}
+             //sx={{ height: '50px', marginRight: '16px' }} // Adjust height as needed
+        />
         <Typography fontFamily = "sans-serif" variant="h6" sx={{ flexGrow: 1 }}>
-          My Politics Platform
+         
         </Typography>
         
         <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
