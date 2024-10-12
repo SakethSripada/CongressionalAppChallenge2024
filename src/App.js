@@ -5,10 +5,14 @@ import Homepage from './Pages/Homepage';
 import LocalPage from './Pages/LocalPage';
 import StatePage from './Pages/StatePage';
 import NationalPage from './Pages/NationalPage';
+import Chatbot from './Components/Chatbot'; 
+import ChatButton from './Components/ChatButton';  
 
 const App = () => (
   <Router>
     <Navbar />
+    <Chatbot /> 
+    <ChatButton />  
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/local" element={<LocalPage />} />
