@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Dialog, Dialog
 import MenuIcon from '@mui/icons-material/Menu';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Link } from 'react-router-dom';
+import '../App.css';
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -51,20 +52,22 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    <AppBar position="fixed" className="navbar">
+      <Toolbar className = "navbar:hover">
+        <Typography variant="h6" sx={{ flexGrow: 1 }} className = "navbar-brand">
           My Politics Platform
         </Typography>
 
-        <IconButton 
-          edge="start" 
-          color="inherit" 
-          aria-label="menu" 
-          onClick={handleMenuOpen}
-        >
-          <MenuIcon />
-        </IconButton>
+        <div className="navbar-menu">
+          <IconButton 
+            edge="start" 
+            color="inherit" 
+            aria-label="menu" 
+            onClick={handleMenuOpen}
+          >
+            <MenuIcon />
+          </IconButton>
+
 
         <Menu
           id="nav-menu"
@@ -78,6 +81,7 @@ const Navbar = () => {
           <MenuItem onClick={handleMenuClose} component={Link} to="/state">State</MenuItem>
           <MenuItem onClick={handleMenuClose} component={Link} to="/national">National</MenuItem>
         </Menu>
+        </div>
 
         <IconButton 
           edge="end" 

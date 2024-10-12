@@ -36,3 +36,119 @@
     transform: rotate(360deg);
   }
 }
+
+/* App.css */
+
+/* App.css */
+
+.homepage {
+  position: relative;
+  min-height: 100vh; /* Ensure it can expand beyond viewport height */
+  overflow: hidden; /* Hide overflow for video */
+}
+
+.background-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -2; /* Place behind other content */
+  transform: translate(-50%, -50%);
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Increased opacity for better visibility */
+  z-index: -1; /* Place below text but above the video */
+}
+
+.content-container {
+  position: relative; /* Ensure this is positioned relative to its container */
+  color: white; /* Change text color for visibility */
+  text-align: center; /* Center the text */
+  z-index: 1; /* Place in front of the overlay */
+  padding: 20px; /* Add some padding for better appearance */
+  margin-top: 100px; /* Add space at the top to avoid overlap with h1 */
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.9); /* Light background for cards */
+  color: black; /* Text color inside cards */
+  padding: 15px; /* Padding inside the card */
+  margin: 10px; /* Space between cards */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+  display: inline-block; /* Allow cards to sit side by side */
+  width: 200px; /* Fixed width for cards */
+}
+
+/* Optional: Add some padding to the bottom */
+body {
+  margin: 0; /* Remove default body margin */
+  padding-bottom: 50px; /* Space for scrolling */
+}
+
+/* src/components/Navbar.css */
+
+.navbar {
+  background-color: transparent; /* Initial transparent background */
+  box-shadow: none; /* Remove shadow initially */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.navbar:hover {
+  background-color: rgba(0, 0, 0, 0.9); /* Change this to your desired color on hover */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Add shadow on hover */
+}
+
+
+.navbar-brand {
+  flex-grow: 1;
+  color: white; /* Brand text color */
+  font-weight: bold; /* Bold brand name */
+  font-family: 'Roboto', sans-serif; /* Modern font */
+  font-size: 24px; /* Slightly larger font size */
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  
+}
+
+.navbar-menu .MuiIconButton-root {
+  color: white; /* Icon color */
+}
+
+.navbar-menu .MuiMenuItem-root {
+  color: black; /* Menu item color */
+}
+
+/* Add hover effects for menu items */
+.MuiMenuItem-root:hover {
+  background-color: rgba(0, 210, 255, 0.2); /* Light background on hover */
+}
+
+/* Optionally, style the Dialog */
+.dialog-title {
+  font-weight: bold; /* Bold title */
+}
+
+.dialog-content {
+  padding: 20px; /* Padding for content */
+}
+
+/* Add responsive styles if necessary */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column; /* Stack items on small screens */
+  }
+}
+
