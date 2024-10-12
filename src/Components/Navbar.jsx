@@ -86,6 +86,11 @@ const Navbar = () => {
     },
   }}
 >
+<Box component="img" 
+       src="/navbarlogo.png" // Update the path to your logo
+       alt="Logo"
+       sx={{ height: '60px', margin: '16px auto', display: 'block' }} // Center logo with margin
+  />
   <List>
     <ListItem button component={Link} to="/" onClick={handleDrawerToggle}>Home</ListItem>
     <ListItem button component={Link} to="/local" onClick={handleDrawerToggle}>Local</ListItem>
