@@ -1,48 +1,29 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar } from '@mui/material';
+import React, { useState, useContext } from 'react';
+import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
-import '../App.css';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { AddressContext } from '../Context/AddressContext';  // Import AddressContext
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false); 
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false); 
-  const [fullAddress, setFullAddress] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-
-  const [nationalReps, setNationalReps] = useState([]);
-  const [stateReps, setStateReps] = useState([]);
-  const [localReps, setLocalReps] = useState([]);
+  const [manualAddress, setManualAddress] = useState('');  // Manage manual input address
+  
+  const { setAddress } = useContext(AddressContext);  // Use setAddress from AddressContext
 
   const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
 
-  useEffect(() => {
-    if (fullAddress) {
-      fetchRepresentativesInfo(fullAddress);
-    }
-  }, [fullAddress]);
-
-  // Define the drawer toggle function
-  const handleDrawerToggle = () => {
-    setDrawerOpen(!drawerOpen); // Toggle drawer state
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false); // Close the dialog
-  };
-
+  // Get location using geolocation
   const handleLocationClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
-
           try {
             const geocodeResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
               params: {
@@ -55,94 +36,38 @@ const Navbar = () => {
             if (results.length > 0) {
               const formattedAddress = results[0].formatted_address;
               if (formattedAddress) {
-                setFullAddress(formattedAddress);  
-                setSnackbarMessage(`Location acquired: Address ${formattedAddress}`);
+                setAddress(formattedAddress);  // Set address in context
+                setSnackbarMessage(`Location acquired: ${formattedAddress}`);
                 setSnackbarOpen(true);
               } else {
-                throw new Error("Address not found in geolocation results.");
+                throw new Error("Address not found.");
               }
             } else {
               throw new Error("No results found.");
             }
           } catch (error) {
-            console.error('Error during reverse geocoding:', error);
-            setSnackbarMessage("Unable to retrieve location. Please enter your address.");
+            setSnackbarMessage("Error retrieving location.");
             setSnackbarOpen(true);
-            setDialogOpen(true); 
+            setDialogOpen(true); // Open address dialog if geolocation fails
           }
         },
-        (error) => {
-          console.error('Geolocation error:', error);
-          setSnackbarMessage("Unable to retrieve location. Please enter your address.");
+        () => {
+          setSnackbarMessage("Geolocation unavailable. Please enter address.");
           setSnackbarOpen(true);
-          setDialogOpen(true); 
+          setDialogOpen(true);
         }
       );
     } else {
-      setSnackbarMessage("Geolocation is not supported by this browser.");
+      setSnackbarMessage("Geolocation is not supported.");
       setSnackbarOpen(true);
-      setDialogOpen(true); 
+      setDialogOpen(true);
     }
   };
 
-  const fetchRepresentativesInfo = async (address) => {
-    try {
-      const representativesResponse = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
-        params: {
-          address: address,
-          key: civicAPIKey
-        }
-      });
-
-      const offices = representativesResponse.data.offices;
-      const officials = representativesResponse.data.officials;
-
-      let national = [];
-      let state = [];
-      let local = [];
-
-      offices.forEach((office) => {
-        office.officialIndices.forEach((officialIndex) => {
-          const official = officials[officialIndex];
-          const officialData = {
-            office: office.name,
-            name: official.name,
-            party: official.party || 'N/A',
-            phone: official.phones ? official.phones[0] : 'N/A',
-            website: official.urls ? official.urls[0] : 'N/A',
-            email: official.emails ? official.emails[0] : 'N/A'
-          };
-
-          if (office.levels.includes('country')) {
-            national.push(officialData);
-          } else if (office.levels.includes('administrativeArea1')) {
-            state.push(officialData);
-          } else if (office.levels.includes('administrativeArea2')) {
-            local.push(officialData);
-          }
-        });
-      });
-
-      setNationalReps(national);
-      setStateReps(state);
-      setLocalReps(local);
-
-      console.log("National Representatives:", national);
-      console.log("State Representatives:", state);
-      console.log("Local Representatives:", local);
-
-      setSnackbarMessage("Representative information retrieved successfully.");
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error('Error fetching representatives:', error);
-      setSnackbarMessage("Failed to fetch representative information.");
-      setSnackbarOpen(true);
-    }
-  };
-
+  // Handle manual address submission
   const handleAddressSubmit = () => {
-    fetchRepresentativesInfo(fullAddress);  // Fetch representative info using entered address
-    setSnackbarMessage(`Address entered: ${fullAddress}`);
+    setAddress(manualAddress);  // Set the manually entered address in the context
+    setSnackbarMessage(`Address entered: ${manualAddress}`);
     setSnackbarOpen(true);
     setDialogOpen(false);
   };
@@ -150,60 +75,41 @@ const Navbar = () => {
   return (
     <AppBar position="fixed" className="navbar">
       <Toolbar>
-        <Box component="img" 
-             src="/navbarlogo.png" 
-             alt="Logo"
-             sx={{ height: '60px', marginRight: '16px' }}
-        />
-        <Typography variant="h6" sx={{ flexGrow: 1 }} />
-        
-        <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
+        <Box component="img" src="/navbarlogo.png" alt="Logo" sx={{ height: '60px', marginRight: '16px' }} />
+        <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setDrawerOpen(!drawerOpen)}>
           <MenuIcon />
         </IconButton>
-
-        <IconButton edge="end" color="inherit" aria-label="get-location" onClick={handleLocationClick}>
+        <IconButton edge="end" color="inherit" aria-label="get-location" onClick={() => handleLocationClick()}>
           <LocationOnIcon />
         </IconButton>
         
         <Drawer
           anchor="left"
           open={drawerOpen}
-          onClose={handleDrawerToggle}
-          sx={{
-            '& .MuiDrawer-paper': {
-              width: 300,
-              boxSizing: 'border-box',
-              backgroundColor: '#f0f0f0',
-            },
-          }}
+          onClose={() => setDrawerOpen(false)}
         >
           <List>
-            <ListItem button component={Link} to="/" onClick={handleDrawerToggle}>Home</ListItem>
-            <ListItem button component={Link} to="/local" onClick={handleDrawerToggle}>Local</ListItem>
-            <ListItem button component={Link} to="/state" onClick={handleDrawerToggle}>State</ListItem>
-            <ListItem button component={Link} to="/national" onClick={handleDrawerToggle}>National</ListItem>
+            <ListItem button component={Link} to="/">Home</ListItem>
+            <ListItem button component={Link} to="/local">Local</ListItem>
+            <ListItem button component={Link} to="/state">State</ListItem>
+            <ListItem button component={Link} to="/national">National</ListItem>
           </List>
         </Drawer>
 
-        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
           <DialogTitle>Enter Address</DialogTitle>
           <DialogContent>
             <TextField 
               autoFocus
-              margin="dense"
-              label="Address"
-              type="text"
               fullWidth
+              value={manualAddress}  // Bind manualAddress to the input field
+              onChange={(e) => setManualAddress(e.target.value)}
+              label="Address"
               placeholder="e.g. 1600 Pennsylvania Ave NW, Washington, DC 20500"
-              value={fullAddress}
-              onChange={(e) => setFullAddress(e.target.value)}
             />
-            <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
-              Example: 1600 Pennsylvania Ave NW, Washington, DC 20500
-            </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose} color="secondary">Cancel</Button>
+            <Button onClick={() => setDialogOpen(false)} color="secondary">Cancel</Button>
             <Button onClick={handleAddressSubmit} color="primary">Submit</Button>
           </DialogActions>
         </Dialog>

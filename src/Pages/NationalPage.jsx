@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { 
   Container, 
   Typography, 
@@ -15,21 +15,65 @@ import {
   CardContent, 
   Button 
 } from '@mui/material';
+import axios from 'axios';
+import { AddressContext } from '../Context/AddressContext';  // Import the AddressContext
 
 const NationalPage = () => {
+  const { address } = useContext(AddressContext);  // Access the address from context
+  const [nationalReps, setNationalReps] = useState([]);
+
+  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
+
+  useEffect(() => {
+    if (address) {
+      const fetchNationalReps = async () => {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
+            params: { address, key: civicAPIKey }
+          });
+
+          const offices = response.data.offices;
+          const officials = response.data.officials;
+          const national = [];
+
+          offices.forEach((office) => {
+            if (office.levels && office.levels.includes('country')) {  // National level
+              office.officialIndices.forEach((index) => {
+                const official = officials[index];
+                national.push({
+                  office: office.name,
+                  name: official.name,
+                  party: official.party || 'N/A',
+                  phone: official.phones ? official.phones[0] : 'N/A',
+                  website: official.urls ? official.urls[0] : 'N/A'
+                });
+              });
+            }
+          });
+
+          setNationalReps(national);
+        } catch (error) {
+          console.error('Error fetching national representatives:', error);
+        }
+      };
+
+      fetchNationalReps();
+    }
+  }, [address]);
+
   return (
     <Box 
       sx={{ 
         position: 'relative', 
         width: '100%', 
-        height: '100vh', // Full viewport height
-        overflow: 'hidden', // Prevents overflow
+        height: '100vh', 
+        overflow: 'hidden',
       }}
     >
       {/* Background Image with Blur */}
       <Box 
         component="img"
-        src="/nationalpagebg.jpg" // Background image
+        src="/nationalpagebg.jpg"
         alt="Background"
         sx={{
           position: 'absolute',
@@ -39,13 +83,13 @@ const NationalPage = () => {
           bottom: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'cover', // Cover the entire area
-          filter: 'blur(3px)', // Apply blur effect to the background
-          zIndex: 0 // Behind everything
+          objectFit: 'cover',
+          filter: 'blur(3px)',
+          zIndex: 0
         }} 
       />
 
-      {/* Overlay for better text visibility */}
+      {/* Overlay */}
       <Box 
         sx={{
           position: 'absolute', 
@@ -53,12 +97,12 @@ const NationalPage = () => {
           left: 0, 
           right: 0, 
           bottom: 0, 
-          backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent overlay
+          backgroundColor: 'rgba(255, 255, 255, 0.5)',
           zIndex: 1
         }} 
       />
 
-      {/* Main content container */}
+      {/* Main Content */}
       <Container 
         maxWidth="lg" 
         sx={{ 
@@ -66,10 +110,10 @@ const NationalPage = () => {
           zIndex: 2,
           paddingTop: '80px', 
           paddingBottom: '50px', 
-          height: '100%', // Ensure full height
+          height: '100%',
         }}
       >
-        {/* Header Section */}
+        {/* Header */}
         <Box sx={{ textAlign: 'center', marginBottom: '30px' }}>
           <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2' }}>
             National Elections
@@ -79,37 +123,47 @@ const NationalPage = () => {
           </Typography>
         </Box>
 
-        {/* National Election Results */}
+        {/* National Representatives */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2' }}>
-            National Election Results
+            Your National Representatives
           </Typography>
-          <TableContainer component={Paper} elevation={3}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#e3f2fd' }}>
-                  <TableCell><strong>State</strong></TableCell>
-                  <TableCell><strong>Candidate</strong></TableCell>
-                  <TableCell align="right"><strong>Votes</strong></TableCell>
-                  <TableCell align="right"><strong>Percentage</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>California</TableCell>
-                  <TableCell>John Doe</TableCell>
-                  <TableCell align="right">5,500,000</TableCell>
-                  <TableCell align="right">65%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Texas</TableCell>
-                  <TableCell>Jane Smith</TableCell>
-                  <TableCell align="right">4,200,000</TableCell>
-                  <TableCell align="right">55%</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {nationalReps.length > 0 ? (
+            <TableContainer component={Paper} elevation={3}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#e3f2fd' }}>
+                    <TableCell><strong>Office</strong></TableCell>
+                    <TableCell><strong>Name</strong></TableCell>
+                    <TableCell align="right"><strong>Party</strong></TableCell>
+                    <TableCell align="right"><strong>Phone</strong></TableCell>
+                    <TableCell align="right"><strong>Website</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {nationalReps.map((rep, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{rep.office}</TableCell>
+                      <TableCell>{rep.name}</TableCell>
+                      <TableCell align="right">{rep.party}</TableCell>
+                      <TableCell align="right">{rep.phone}</TableCell>
+                      <TableCell align="right">
+                        {rep.website ? (
+                          <a href={rep.website} target="_blank" rel="noopener noreferrer">
+                            {rep.website}
+                          </a>
+                        ) : 'N/A'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body1" color="text.secondary">
+              No national representatives found for the provided address.
+            </Typography>
+          )}
         </Box>
 
         {/* Public Opinion Polls Section */}

@@ -1,36 +1,84 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { AddressContext } from '../Context/AddressContext';  // Import the AddressContext
+import axios from 'axios';
 
 const LocalPage = () => {
+  const { address } = useContext(AddressContext);  // Access the address from context
+  const [localReps, setLocalReps] = useState([]);
+
+  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
+
+  useEffect(() => {
+    if (address) {
+      const fetchLocalReps = async () => {
+        try {
+          const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
+            params: { address, key: civicAPIKey }
+          });
+
+          const offices = response.data.offices;
+          const officials = response.data.officials;
+          const local = [];
+
+          offices.forEach((office) => {
+            if (office.levels && office.levels.includes('administrativeArea2')) {  // Local level
+              office.officialIndices.forEach((index) => {
+                const official = officials[index];
+                local.push({
+                  office: office.name,
+                  name: official.name,
+                  party: official.party || 'N/A',
+                  phone: official.phones ? official.phones[0] : 'N/A',
+                  website: official.urls ? official.urls[0] : 'N/A'
+                });
+              });
+            }
+          });
+
+          setLocalReps(local);
+        } catch (error) {
+          console.error('Error fetching local representatives:', error);
+        }
+      };
+
+      fetchLocalReps();
+    }
+  }, [address]);
+
   return (
     <Container maxWidth="md" sx={{ paddingTop: '50px', paddingBottom: '50px' }}>
-      
       <Box sx={{ textAlign: 'center', marginBottom: '30px' }}>
         <Typography variant="h3" component="h1" gutterBottom>
           Local Elections
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Find information about upcoming local elections, candidates, and polling locations.
+          Find information about your local representatives and upcoming elections.
         </Typography>
       </Box>
 
       <Box>
         <Typography variant="h4" gutterBottom>
-          Upcoming Local Elections
+          Your Local Representatives
         </Typography>
         <List>
-          <ListItem>
-            <ListItemText primary="City Council Election - June 15th" secondary="Candidates: John Doe, Jane Smith" />
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <ListItemText primary="School Board Election - July 10th" secondary="Candidates: Alice Johnson, Bob Lee" />
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <ListItemText primary="Mayor Election - August 20th" secondary="Candidates: Chris Evans, Diana Rose" />
-          </ListItem>
-          <Divider />
+          {localReps.length > 0 ? (
+            localReps.map((rep, index) => (
+              <React.Fragment key={index}>
+                <ListItem>
+                  <ListItemText
+                    primary={`${rep.name} (${rep.party})`}
+                    secondary={`Office: ${rep.office} | Phone: ${rep.phone}`}
+                  />
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))
+          ) : (
+            <Typography variant="body1" color="textSecondary">
+              No local representatives found for the provided address.
+            </Typography>
+          )}
         </List>
       </Box>
 
@@ -46,7 +94,6 @@ const LocalPage = () => {
           />
         </Box>
       </Box>
-      
     </Container>
   );
 };
