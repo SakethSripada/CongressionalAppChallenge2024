@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar } from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Drawer, List, ListItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Snackbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Link } from 'react-router-dom';
@@ -161,8 +161,14 @@ const Navbar = () => {
   return (
     <AppBar position="fixed" className="navbar">
       <Toolbar>
+      <Box component="img" 
+             src="/navbarlogo.png" // Update the path to your logo
+             alt="Logo"
+             sx={{ height: '60px', marginRight: '16px' }}
+             //sx={{ height: '50px', marginRight: '16px' }} // Adjust height as needed
+        />
         <Typography fontFamily = "sans-serif" variant="h6" sx={{ flexGrow: 1 }}>
-          My Politics Platform
+         
         </Typography>
         
         <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
@@ -174,24 +180,25 @@ const Navbar = () => {
         </IconButton>
         
         <Drawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={handleDrawerToggle}
-          sx={{
-            '& .MuiDrawer-paper': {
-              width: 300,
-              boxSizing: 'border-box',
-              backgroundColor: '#f0f0f0',
-            },
-          }}
-        >
-          <List>
-            <ListItem button component={Link} to="/" onClick={handleDrawerToggle}>Home</ListItem>
-            <ListItem button component={Link} to="/local" onClick={handleDrawerToggle}>Local</ListItem>
-            <ListItem button component={Link} to="/state" onClick={handleDrawerToggle}>State</ListItem>
-            <ListItem button component={Link} to="/national" onClick={handleDrawerToggle}>National</ListItem>
-          </List>
-        </Drawer>
+  anchor="left"
+  open={drawerOpen}
+  onClose={handleDrawerToggle}
+  sx={{
+    '& .MuiDrawer-paper': {
+      width: 300, // Change this value to increase width
+      boxSizing: 'border-box',
+      backgroundColor: '#f0f0f0', // Example background color
+    },
+  }}
+>
+  <List>
+    <ListItem button component={Link} to="/" onClick={handleDrawerToggle}>Home</ListItem>
+    <ListItem button component={Link} to="/local" onClick={handleDrawerToggle}>Local</ListItem>
+    <ListItem button component={Link} to="/state" onClick={handleDrawerToggle}>State</ListItem>
+    <ListItem button component={Link} to="/national" onClick={handleDrawerToggle}>National</ListItem>
+  </List>
+</Drawer>
+
 
         <Dialog open={dialogOpen} onClose={handleDialogClose}>
           <DialogTitle>Enter Address</DialogTitle>
