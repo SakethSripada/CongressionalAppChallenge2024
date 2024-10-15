@@ -8,8 +8,9 @@ const StatePage = () => {
   const { address } = useContext(AddressContext);  // Access the address from context
   const [stateReps, setStateReps] = useState([]);
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
+  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Insert your Civic API key here
 
+  // Fetch State Representatives
   useEffect(() => {
     if (address) {
       const fetchStateReps = async () => {

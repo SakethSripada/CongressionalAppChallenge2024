@@ -16,7 +16,7 @@ const Navbar = () => {
   
   const { setAddress } = useContext(AddressContext);  // Use setAddress from AddressContext
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
+  const geocodingAPIKey = 'AIzaSyAtj1NCZaapddWRhlR7zxIQk0qVgZ_X_os';  // Your provided API key
 
   // Get location using geolocation
   const handleLocationClick = () => {
@@ -28,7 +28,7 @@ const Navbar = () => {
             const geocodeResponse = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
               params: {
                 latlng: `${latitude},${longitude}`,
-                key: civicAPIKey
+                key: geocodingAPIKey
               }
             });
 
@@ -89,10 +89,11 @@ const Navbar = () => {
           onClose={() => setDrawerOpen(false)}
         >
           <List>
-            <ListItem button component={Link} to="/">Home</ListItem>
-            <ListItem button component={Link} to="/local">Local</ListItem>
-            <ListItem button component={Link} to="/state">State</ListItem>
-            <ListItem button component={Link} to="/national">National</ListItem>
+            <ListItem button={"true"} component={Link} to="/">Home</ListItem>
+            <ListItem button={"true"} component={Link} to="/local">Local</ListItem>
+            <ListItem button={"true"} component={Link} to="/state">State</ListItem>
+            <ListItem button={"true"} component={Link} to="/national">National</ListItem>
+
           </List>
         </Drawer>
 

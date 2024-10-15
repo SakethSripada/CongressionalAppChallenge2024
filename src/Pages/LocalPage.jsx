@@ -7,8 +7,9 @@ const LocalPage = () => {
   const { address } = useContext(AddressContext);  // Access the address from context
   const [localReps, setLocalReps] = useState([]);
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Your provided API key
+  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Insert your API key here
 
+  // Fetch Local Representatives
   useEffect(() => {
     if (address) {
       const fetchLocalReps = async () => {
@@ -53,10 +54,11 @@ const LocalPage = () => {
           Local Elections
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Find information about your local representatives and upcoming elections.
+          Find information about your local representatives and polling stations.
         </Typography>
       </Box>
 
+      {/* Local Representatives Section */}
       <Box>
         <Typography variant="h4" gutterBottom>
           Your Local Representatives
@@ -82,6 +84,7 @@ const LocalPage = () => {
         </List>
       </Box>
 
+      {/* Polling Station Section */}
       <Box sx={{ textAlign: 'center', marginTop: '50px' }}>
         <Typography variant="h4" gutterBottom>
           Find Your Local Polling Station
