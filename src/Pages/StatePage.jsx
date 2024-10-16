@@ -2,15 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Container, Typography, Box, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
-import { AddressContext } from '../Context/AddressContext';  // Import the AddressContext
+import { AddressContext } from '../Context/AddressContext';  
 
 const StatePage = () => {
-  const { address } = useContext(AddressContext);  // Access the address from context
+  const { address } = useContext(AddressContext);  
   const [stateReps, setStateReps] = useState([]);
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Insert your Civic API key here
+  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;  
 
-  // Fetch State Representatives
   useEffect(() => {
     if (address) {
       const fetchStateReps = async () => {
@@ -24,7 +23,7 @@ const StatePage = () => {
           const state = [];
 
           offices.forEach((office) => {
-            if (office.levels && office.levels.includes('administrativeArea1')) {  // State level
+            if (office.levels && office.levels.includes('administrativeArea1')) {  
               office.officialIndices.forEach((index) => {
                 const official = officials[index];
                 state.push({
@@ -46,7 +45,7 @@ const StatePage = () => {
 
       fetchStateReps();
     }
-  }, [address]);
+  }, [address, civicAPIKey]);
 
   return (
     <Container maxWidth="lg" sx={{ paddingTop: '50px', paddingBottom: '50px' }}>

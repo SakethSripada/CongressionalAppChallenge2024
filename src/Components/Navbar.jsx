@@ -5,20 +5,19 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Link } from 'react-router-dom';
 import { Box } from '@mui/material';
 import axios from 'axios';
-import { AddressContext } from '../Context/AddressContext';  // Import AddressContext
+import { AddressContext } from '../Context/AddressContext'; 
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false); 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [manualAddress, setManualAddress] = useState('');  // Manage manual input address
+  const [manualAddress, setManualAddress] = useState('');  
   
-  const { setAddress } = useContext(AddressContext);  // Use setAddress from AddressContext
+  const { setAddress } = useContext(AddressContext);  
 
-  const geocodingAPIKey = 'AIzaSyAtj1NCZaapddWRhlR7zxIQk0qVgZ_X_os';  // Your provided API key
+  const geocodingAPIKey = process.env.REACT_APP_GEOCODING_API_KEY;  
 
-  // Get location using geolocation
   const handleLocationClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -36,7 +35,7 @@ const Navbar = () => {
             if (results.length > 0) {
               const formattedAddress = results[0].formatted_address;
               if (formattedAddress) {
-                setAddress(formattedAddress);  // Set address in context
+                setAddress(formattedAddress);
                 setSnackbarMessage(`Location acquired: ${formattedAddress}`);
                 setSnackbarOpen(true);
               } else {
@@ -48,7 +47,7 @@ const Navbar = () => {
           } catch (error) {
             setSnackbarMessage("Error retrieving location.");
             setSnackbarOpen(true);
-            setDialogOpen(true); // Open address dialog if geolocation fails
+            setDialogOpen(true); 
           }
         },
         () => {
@@ -64,9 +63,8 @@ const Navbar = () => {
     }
   };
 
-  // Handle manual address submission
   const handleAddressSubmit = () => {
-    setAddress(manualAddress);  // Set the manually entered address in the context
+    setAddress(manualAddress);  
     setSnackbarMessage(`Address entered: ${manualAddress}`);
     setSnackbarOpen(true);
     setDialogOpen(false);
@@ -103,7 +101,7 @@ const Navbar = () => {
             <TextField 
               autoFocus
               fullWidth
-              value={manualAddress}  // Bind manualAddress to the input field
+              value={manualAddress}  
               onChange={(e) => setManualAddress(e.target.value)}
               label="Address"
               placeholder="e.g. 1600 Pennsylvania Ave NW, Washington, DC 20500"

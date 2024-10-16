@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Container, Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
-import { AddressContext } from '../Context/AddressContext';  // Import the AddressContext
+import { AddressContext } from '../Context/AddressContext';  
 import axios from 'axios';
 
 const LocalPage = () => {
-  const { address } = useContext(AddressContext);  // Access the address from context
+  const { address } = useContext(AddressContext);  
   const [localReps, setLocalReps] = useState([]);
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Insert your API key here
+  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;  
 
-  // Fetch Local Representatives
   useEffect(() => {
     if (address) {
       const fetchLocalReps = async () => {
@@ -23,7 +22,7 @@ const LocalPage = () => {
           const local = [];
 
           offices.forEach((office) => {
-            if (office.levels && office.levels.includes('administrativeArea2')) {  // Local level
+            if (office.levels && office.levels.includes('administrativeArea2')) { 
               office.officialIndices.forEach((index) => {
                 const official = officials[index];
                 local.push({
@@ -45,7 +44,7 @@ const LocalPage = () => {
 
       fetchLocalReps();
     }
-  }, [address]);
+  }, [address, civicAPIKey]);
 
   return (
     <Container maxWidth="md" sx={{ paddingTop: '50px', paddingBottom: '50px' }}>

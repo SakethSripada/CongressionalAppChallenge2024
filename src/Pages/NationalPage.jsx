@@ -17,18 +17,17 @@ import {
   TableRow
 } from '@mui/material';
 import axios from 'axios';
-import { AddressContext } from '../Context/AddressContext';  // Import the AddressContext
+import { AddressContext } from '../Context/AddressContext';  
 
 const NationalPage = () => {
-  const { address } = useContext(AddressContext);  // Access the address from context
+  const { address } = useContext(AddressContext);  
   const [nationalReps, setNationalReps] = useState([]);
-  const [voterInfo, setVoterInfo] = useState(null);  // New state for voter info
-  const [errorMessage, setErrorMessage] = useState('');  // Handle errors
-  const [loading, setLoading] = useState(true);  // Track loading status
+  const [voterInfo, setVoterInfo] = useState(null);  
+  const [errorMessage, setErrorMessage] = useState('');  
+  const [loading, setLoading] = useState(true);  
 
-  const civicAPIKey = 'AIzaSyBL3WFFp76lGFGKI-flp-ilGzlY56PzCfc';  // Insert your Google Civic API key here
+  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY; 
 
-  // Fetch national representatives
   useEffect(() => {
     if (address) {
       const fetchNationalReps = async () => {
@@ -42,7 +41,7 @@ const NationalPage = () => {
           const national = [];
 
           offices.forEach((office) => {
-            if (office.levels && office.levels.includes('country')) {  // National level
+            if (office.levels && office.levels.includes('country')) { 
               office.officialIndices.forEach((index) => {
                 const official = officials[index];
                 national.push({
@@ -64,9 +63,8 @@ const NationalPage = () => {
 
       fetchNationalReps();
     }
-  }, [address]);
+  }, [address, civicAPIKey]);
 
-  // Fetch voter information for the general election (electionId=9000)
   useEffect(() => {
     if (address) {
       const fetchVoterInfo = async () => {
@@ -93,8 +91,8 @@ const NationalPage = () => {
       sx={{ 
         position: 'relative', 
         width: '100%', 
-        minHeight: '100vh',  // Allow page to grow naturally
-        overflowX: 'hidden',  // Ensure no horizontal overflow
+        minHeight: '100vh',  
+        overflowX: 'hidden', 
       }}
     >
       {/* Background Image with Blur */}
@@ -137,7 +135,7 @@ const NationalPage = () => {
           zIndex: 2,
           paddingTop: '80px', 
           paddingBottom: '50px',
-          overflowY: 'auto',  // Enable vertical scrolling if content is too long
+          overflowY: 'auto',  
         }}
       >
         {/* Header */}
