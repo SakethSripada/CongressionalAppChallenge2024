@@ -1,29 +1,38 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Typography, Box, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
-import { AddressContext } from '../Context/AddressContext';  
+import { AddressContext } from '../Context/AddressContext';
 
 const StatePage = () => {
-  const { address } = useContext(AddressContext);  
+  const { address } = useContext(AddressContext);
   const [stateReps, setStateReps] = useState([]);
+  const [electionData, setElectionData] = useState(null);
+  const [voterInfo, setVoterInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;  
+  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;
 
   useEffect(() => {
     if (address) {
       const fetchStateReps = async () => {
         try {
+          setLoading(true);
+          console.log('Fetching state representatives for address:', address);
+
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
           });
+
+          console.log('State representatives response:', response.data);
 
           const offices = response.data.offices;
           const officials = response.data.officials;
           const state = [];
 
           offices.forEach((office) => {
-            if (office.levels && office.levels.includes('administrativeArea1')) {  
+            if (office.levels && office.levels.includes('administrativeArea1')) {
               office.officialIndices.forEach((index) => {
                 const official = officials[index];
                 state.push({
@@ -31,15 +40,24 @@ const StatePage = () => {
                   name: official.name,
                   party: official.party || 'N/A',
                   phone: official.phones ? official.phones[0] : 'N/A',
-                  website: official.urls ? official.urls[0] : 'N/A'
+                  website: official.urls ? official.urls[0] : 'N/A',
                 });
               });
             }
           });
 
+          console.log('Extracted state representatives:', state);
           setStateReps(state);
+          setErrorMessage('');
+
+          const { stateName, district } = extractStateAndDistrict(response.data);
+          console.log('Extracted state and district:', stateName, district);
+          fetchElectionData(stateName, district);
         } catch (error) {
           console.error('Error fetching state representatives:', error);
+          setErrorMessage('Error fetching state representatives. Please try again later.');
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -47,9 +65,85 @@ const StatePage = () => {
     }
   }, [address, civicAPIKey]);
 
+  const extractStateAndDistrict = (data) => {
+    const divisions = data.divisions;
+    let stateName = null;
+    let district = null;
+
+    Object.keys(divisions).forEach((divisionId) => {
+      if (divisionId.includes('state:') && divisionId.includes('cd:')) {
+        const stateDivision = divisions[divisionId].name;
+        stateName = stateDivision.slice(0, stateDivision.indexOf("'"));
+        const districtMatch = stateDivision.match(/\d+\w{2}/);
+        district = districtMatch ? districtMatch[0] : null;
+        console.log('State Name:', stateName);
+        console.log('District:', district);
+      }
+    });
+
+    return { stateName, district };
+  };
+
+  // Fetch election data from the Flask backend at localhost:5000
+  const fetchElectionData = async (stateName, district) => {
+    try {
+      console.log('Fetching election data for:', stateName, 'District:', district);
+      const response = await axios.get('http://localhost:5000/api/elections', {
+        params: { state: stateName, district: district }
+      });
+
+      console.log('Election data response:', response.data);
+
+      const { houseCandidates, senateCandidates, voterInfo } = response.data;
+
+      // Clean up house candidates
+      const cleanedHouseCandidates = houseCandidates.map(candidate => ({
+        ...candidate,
+        party: candidate.party.slice(-2, -1), // Extract the last character only
+        link: candidate.link.replace('https://ballotpedia.org', '') // Remove repeated part from link
+      }));
+
+      // Clean up senate candidates
+      const cleanedSenateCandidates = senateCandidates.map(candidate => ({
+        ...candidate,
+        party: candidate.party.slice(-2, -1), // Extract the last character only
+        link: candidate.link.replace('https://ballotpedia.org', '') // Remove repeated part from link
+      }));
+
+      setElectionData({
+        house: cleanedHouseCandidates,
+        senate: cleanedSenateCandidates,
+      });
+      setVoterInfo(voterInfo);
+
+      console.log('Cleaned House Candidates:', cleanedHouseCandidates);
+      console.log('Cleaned Senate Candidates:', cleanedSenateCandidates);
+      console.log('Voter Information:', voterInfo);
+    } catch (error) {
+      console.error('Error fetching election data:', error);
+    }
+  };
+
+  // Helper function to map party abbreviations to full names
+  const mapPartyToFullName = (partyAbbreviation) => {
+    switch (partyAbbreviation) {
+      case 'R':
+        return 'Republican';
+      case 'D':
+        return 'Democrat';
+      default:
+        return partyAbbreviation;
+    }
+  };
+
+  // Helper function to format the candidate's name and party
+  const formatCandidate = (name, party) => {
+    const fullPartyName = mapPartyToFullName(party);
+    return `${name} (${fullPartyName})`;
+  };
+
   return (
     <Container maxWidth="lg" sx={{ paddingTop: '50px', paddingBottom: '50px' }}>
-      
       {/* Page Header */}
       <Box sx={{ textAlign: 'center', marginBottom: '30px' }}>
         <Typography variant="h3" component="h1" gutterBottom>
@@ -65,7 +159,11 @@ const StatePage = () => {
         <Typography variant="h4" gutterBottom>
           Your State Representatives
         </Typography>
-        {stateReps.length > 0 ? (
+        {loading ? (
+          <Typography variant="body1" color="textSecondary">
+            Loading state representatives...
+          </Typography>
+        ) : stateReps.length > 0 ? (
           stateReps.map((rep, index) => (
             <Accordion key={index}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -85,72 +183,60 @@ const StatePage = () => {
           ))
         ) : (
           <Typography variant="body1" color="textSecondary">
-            No state representatives found for the provided address.
+            {errorMessage || 'No state representatives found for the provided address.'}
           </Typography>
         )}
       </Box>
 
-      {/* State Election News and Important Dates */}
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="h4" gutterBottom>
-            State Election News
-          </Typography>
-          <Box>
-            <Typography variant="body1" paragraph>
-              Stay informed with the latest news about state-level elections. Get updates on candidates, voting laws, and more.
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              - Election Law Changes: August 1, 2023 <br/>
-              - Gubernatorial Debate: September 15, 2023
-            </Typography>
-          </Box>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Typography variant="h4" gutterBottom>
-            Important Dates
-          </Typography>
-          <Box>
-            <Typography variant="body1" paragraph>
-              Mark your calendar with these important election dates:
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              - Voter Registration Deadline: October 10, 2023 <br/>
-              - Early Voting Starts: October 25, 2023 <br/>
-              - Election Day: November 8, 2023
-            </Typography>
-          </Box>
-        </Grid>
-      </Grid>
-
-      {/* Election Guides Section */}
-      <Box sx={{ marginTop: '50px' }}>
+      {/* Election Information Section */}
+      <Box sx={{ marginBottom: '50px' }}>
         <Typography variant="h4" gutterBottom>
-          State Election Guides
+          Election Information
         </Typography>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>How to Register to Vote in State Elections</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              To register to vote in your state, follow these steps...
+        {electionData ? (
+          <Box>
+            <Typography variant="h6">House Elections</Typography>
+            {electionData.house && electionData.house.length > 0 ? (
+              electionData.house.map((candidate, index) => (
+                <Typography key={index}>
+                  {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
+                </Typography>
+              ))
+            ) : (
+              <Typography>No House candidates found</Typography>
+            )}
+
+            <Typography variant="h6">Senate Elections</Typography>
+            {electionData.senate && electionData.senate.length > 0 ? (
+              electionData.senate.map((candidate, index) => (
+                <Typography key={index}>
+                  {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
+                </Typography>
+              ))
+            ) : (
+              <Typography>No Senate candidates found</Typography>
+            )}
+
+            {/* Voter Information Section */}
+            <Typography variant="h6" gutterBottom>
+              Voter Information
             </Typography>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Where to Vote</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              You can find your nearest polling station by visiting the official state election website or using our polling station locator.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
+            {voterInfo && voterInfo.length > 0 ? (
+              voterInfo.map((info, index) => (
+                <Typography key={index}>
+                  {Object.keys(info)[0]}: {Object.values(info)[0]}
+                </Typography>
+              ))
+            ) : (
+              <Typography>No voter information available.</Typography>
+            )}
+          </Box>
+        ) : (
+          <Typography variant="body1" color="textSecondary">
+            No election information found for the provided address.
+          </Typography>
+        )}
       </Box>
-      
     </Container>
   );
 };
