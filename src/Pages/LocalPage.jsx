@@ -1,17 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Typography, Box, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { Container, Typography, Box, List, ListItem, ListItemText, Divider, CircularProgress } from '@mui/material';
 import { AddressContext } from '../Context/AddressContext';  
 import axios from 'axios';
 
 const LocalPage = () => {
   const { address } = useContext(AddressContext);  
   const [localReps, setLocalReps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;  
 
   useEffect(() => {
     if (address) {
       const fetchLocalReps = async () => {
+        setLoading(true); // Set loading to true before fetching data
         try {
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
@@ -37,8 +40,12 @@ const LocalPage = () => {
           });
 
           setLocalReps(local);
+          setErrorMessage('');
         } catch (error) {
           console.error('Error fetching local representatives:', error);
+          setErrorMessage('Error fetching local representatives. Please try again later.');
+        } finally {
+          setLoading(false); // Set loading to false after fetching data
         }
       };
 
@@ -56,6 +63,20 @@ const LocalPage = () => {
           Find information about your local representatives and polling stations.
         </Typography>
       </Box>
+
+      {/* Loading Indicator */}
+      {loading && (
+        <Box sx={{ textAlign: 'center', marginBottom: '50px' }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {/* Error Message */}
+      {errorMessage && (
+        <Typography variant="body1" color="error">
+          {errorMessage}
+        </Typography>
+      )}
 
       {/* Local Representatives Section */}
       <Box>

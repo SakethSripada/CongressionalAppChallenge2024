@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails, CircularProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';
@@ -7,8 +7,8 @@ import { AddressContext } from '../Context/AddressContext';
 const StatePage = () => {
   const { address } = useContext(AddressContext);
   const [stateReps, setStateReps] = useState([]);
-  const [electionData, setElectionData] = useState(null);
-  const [voterInfo, setVoterInfo] = useState(null);
+  const [electionData, setElectionData] = useState({ house: [], senate: [] }); // Initialize with default structure
+  const [voterInfo, setVoterInfo] = useState([]); // Initialize as an empty array
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -31,17 +31,22 @@ const StatePage = () => {
           const officials = response.data.officials;
           const state = [];
 
+          // Corrected extraction of representatives
           offices.forEach((office) => {
+            // Check for state-level representatives using administrativeArea1
             if (office.levels && office.levels.includes('administrativeArea1')) {
               office.officialIndices.forEach((index) => {
                 const official = officials[index];
-                state.push({
-                  office: office.name,
-                  name: official.name,
-                  party: official.party || 'N/A',
-                  phone: official.phones ? official.phones[0] : 'N/A',
-                  website: official.urls ? official.urls[0] : 'N/A',
-                });
+                // Ensure official is defined
+                if (official) {
+                  state.push({
+                    office: office.name,
+                    name: official.name,
+                    party: official.party || 'N/A',
+                    phone: official.phones ? official.phones[0] : 'N/A',
+                    website: official.urls ? official.urls[0] : 'N/A',
+                  });
+                }
               });
             }
           });
@@ -88,6 +93,12 @@ const StatePage = () => {
   const fetchElectionData = async (stateName, district) => {
     try {
       console.log('Fetching election data for:', stateName, 'District:', district);
+      if (!stateName || !district) {
+        console.error('Invalid state or district:', stateName, district);
+        setErrorMessage('State or district is not defined.');
+        return;
+      }
+
       const response = await axios.get('http://localhost:5000/api/elections', {
         params: { state: stateName, district: district }
       });
@@ -121,6 +132,7 @@ const StatePage = () => {
       console.log('Voter Information:', voterInfo);
     } catch (error) {
       console.error('Error fetching election data:', error);
+      setErrorMessage('Failed to fetch election data. Please check your input.');
     }
   };
 
@@ -193,48 +205,44 @@ const StatePage = () => {
         <Typography variant="h4" gutterBottom>
           Election Information
         </Typography>
-        {electionData ? (
+        {electionData.house.length > 0 ? ( // Check if house candidates exist
           <Box>
             <Typography variant="h6">House Elections</Typography>
-            {electionData.house && electionData.house.length > 0 ? (
-              electionData.house.map((candidate, index) => (
-                <Typography key={index}>
-                  {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
-                </Typography>
-              ))
-            ) : (
-              <Typography>No House candidates found</Typography>
-            )}
-
-            <Typography variant="h6">Senate Elections</Typography>
-            {electionData.senate && electionData.senate.length > 0 ? (
-              electionData.senate.map((candidate, index) => (
-                <Typography key={index}>
-                  {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
-                </Typography>
-              ))
-            ) : (
-              <Typography>No Senate candidates found</Typography>
-            )}
-
-            {/* Voter Information Section */}
-            <Typography variant="h6" gutterBottom>
-              Voter Information
-            </Typography>
-            {voterInfo && voterInfo.length > 0 ? (
-              voterInfo.map((info, index) => (
-                <Typography key={index}>
-                  {Object.keys(info)[0]}: {Object.values(info)[0]}
-                </Typography>
-              ))
-            ) : (
-              <Typography>No voter information available.</Typography>
-            )}
+            {electionData.house.map((candidate, index) => (
+              <Typography key={index}>
+                {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
+              </Typography>
+            ))}
           </Box>
         ) : (
-          <Typography variant="body1" color="textSecondary">
-            No election information found for the provided address.
-          </Typography>
+          <Typography>No House candidates found</Typography>
+        )}
+
+        {electionData.senate.length > 0 ? ( // Check if senate candidates exist
+          <Box>
+            <Typography variant="h6">Senate Elections</Typography>
+            {electionData.senate.map((candidate, index) => (
+              <Typography key={index}>
+                {formatCandidate(candidate.name, candidate.party)} - <a href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</a>
+              </Typography>
+            ))}
+          </Box>
+        ) : (
+          <Typography>No Senate candidates found</Typography>
+        )}
+
+        {/* Voter Information Section */}
+        <Typography variant="h6" gutterBottom>
+          Voter Information
+        </Typography>
+        {voterInfo.length > 0 ? ( // Check if voterInfo has any items
+          voterInfo.map((info, index) => (
+            <Typography key={index}>
+              {Object.keys(info)[0]}: {Object.values(info)[0]}
+            </Typography>
+          ))
+        ) : (
+          <Typography>No voter information available.</Typography>
         )}
       </Box>
     </Container>

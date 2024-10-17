@@ -5,16 +5,13 @@ import {
   Box, 
   Paper, 
   Button, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Divider, 
   Table, 
   TableBody, 
   TableCell, 
   TableContainer, 
   TableHead, 
-  TableRow
+  TableRow,
+  Divider
 } from '@mui/material';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';  
@@ -35,6 +32,8 @@ const NationalPage = () => {
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
           });
+
+          console.log('National representatives response:', response.data); // Log the response data
 
           const offices = response.data.offices;
           const officials = response.data.officials;
@@ -58,6 +57,7 @@ const NationalPage = () => {
           setNationalReps(national);
         } catch (error) {
           console.error('Error fetching national representatives:', error);
+          setErrorMessage('Error fetching national representatives. Please try again later.');
         }
       };
 
@@ -73,6 +73,8 @@ const NationalPage = () => {
           const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
             params: { address, electionId: 9000, key: civicAPIKey }
           });
+
+          console.log('Voter information response:', response.data); // Log the response data
           setVoterInfo(response.data);
         } catch (error) {
           console.error('Error fetching voter information:', error);
@@ -204,16 +206,16 @@ const NationalPage = () => {
             <Box>
               <Typography variant="h5" gutterBottom>Election Information</Typography>
               <Paper sx={{ padding: '16px', marginBottom: '16px' }}>
-                <Typography variant="body1"><strong>Election Name:</strong> {voterInfo.election.name}</Typography>
-                <Typography variant="body1"><strong>Election Day:</strong> {voterInfo.election.electionDay}</Typography>
+                <Typography variant="body1"><strong>Election Name:</strong> {voterInfo.election?.name || 'N/A'}</Typography>
+                <Typography variant="body1"><strong>Election Day:</strong> {voterInfo.election?.electionDay || 'N/A'}</Typography>
               </Paper>
 
               <Typography variant="h5" gutterBottom>Polling Locations</Typography>
               {voterInfo.pollingLocations?.length > 0 ? (
                 voterInfo.pollingLocations.map((location, index) => (
                   <Paper key={index} sx={{ padding: '16px', marginBottom: '16px' }}>
-                    <Typography variant="body1"><strong>Location Name:</strong> {location.address.locationName}</Typography>
-                    <Typography variant="body1"><strong>Address:</strong> {location.address.line1}, {location.address.city}, {location.address.state} {location.address.zip}</Typography>
+                    <Typography variant="body1"><strong>Location Name:</strong> {location.address?.locationName || 'N/A'}</Typography>
+                    <Typography variant="body1"><strong>Address:</strong> {location.address?.line1}, {location.address?.city}, {location.address?.state} {location.address?.zip}</Typography>
                     <Typography variant="body1"><strong>Polling Hours:</strong> {location.pollingHours || 'N/A'}</Typography>
                   </Paper>
                 ))
@@ -228,12 +230,12 @@ const NationalPage = () => {
                 <Paper key={index} sx={{ padding: '16px', marginBottom: '16px' }}>
                   <Typography variant="body1"><strong>State:</strong> {stateInfo.name}</Typography>
                   <Typography variant="body1"><strong>Election Administration Body:</strong> {stateInfo.electionAdministrationBody.name}</Typography>
-                  <Typography variant="body1"><strong>Office Hours:</strong> {stateInfo.electionAdministrationBody.hoursOfOperation}</Typography>
+                  <Typography variant="body1"><strong>Office Hours:</strong> {stateInfo.electionAdministrationBody.hoursOfOperation || 'N/A'}</Typography>
                   <Divider sx={{ my: 2 }} />
                   <Typography variant="h6">Physical Address</Typography>
                   <Typography variant="body2">
-                    <strong>{stateInfo.electionAdministrationBody.physicalAddress.locationName}</strong><br />
-                    {stateInfo.electionAdministrationBody.physicalAddress.line1}, {stateInfo.electionAdministrationBody.physicalAddress.city}, {stateInfo.electionAdministrationBody.physicalAddress.state} {stateInfo.electionAdministrationBody.physicalAddress.zip}
+                    <strong>{stateInfo.electionAdministrationBody.physicalAddress?.locationName || 'N/A'}</strong><br />
+                    {stateInfo.electionAdministrationBody.physicalAddress?.line1}, {stateInfo.electionAdministrationBody.physicalAddress?.city}, {stateInfo.electionAdministrationBody.physicalAddress?.state} {stateInfo.electionAdministrationBody.physicalAddress?.zip}
                   </Typography>
                   <Divider sx={{ my: 2 }} />
                   <Typography variant="h6">Useful Links</Typography>
