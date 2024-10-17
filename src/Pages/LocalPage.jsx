@@ -63,6 +63,8 @@ const LocalPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [municipalCandidates, setMunicipalCandidates] = useState([]);
   const [demographics, setDemographics] = useState([]);
+  const [county, setCounty] = useState('');
+  const [fullStateName, setFullStateName] = useState('');
 
   const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;  
 
@@ -144,6 +146,10 @@ const LocalPage = () => {
   
     // Map the abbreviation to the full state name
     const fullStateName = stateAbbreviationMap[normalizedStateAbbreviation.toUpperCase()] || 'Unknown State';
+  
+    // Set the county and full state name in the state
+    setCounty(county);
+    setFullStateName(fullStateName);
   
     console.log('Extracted County:', county);
     console.log('Extracted State:', fullStateName);
@@ -267,18 +273,18 @@ const LocalPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Label</TableCell>
-                <TableCell>Collin County</TableCell>
-                <TableCell>Texas</TableCell>
+                <TableCell>{county}</TableCell>
+                <TableCell>{fullStateName}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {demographics.map((item, index) => {
-                const [collinValue, texasValue] = item.value.split(', ');
+                const [countyValue, stateValue] = item.value.split(', ');
                 return (
                   <TableRow key={index}>
                     <TableCell>{item.label}</TableCell>
-                    <TableCell>{collinValue.split(' (')[0]}</TableCell>
-                    <TableCell>{texasValue.split(' (')[0]}</TableCell>
+                    <TableCell>{countyValue.split(' (')[0]}</TableCell>
+                    <TableCell>{stateValue.split(' (')[0]}</TableCell>
                   </TableRow>
                 );
               })}
