@@ -21,7 +21,7 @@ const Homepage = () => {
       
       <Box sx={{ textAlign: 'center', marginBottom: '50px' }}>
         <Typography variant="h2" component="h1" gutterBottom>
-          Welcome to the Voting App
+          Welcome to CivicCompass
         </Typography>
         <Typography variant="h6" color="white" paragraph>
           Stay updated with the latest election information, political news, and voting locations.
