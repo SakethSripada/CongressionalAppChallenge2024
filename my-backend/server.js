@@ -1,14 +1,14 @@
 const express = require('express');
 const axios = require('axios');
-const cheerio = require('cheerio'); // For HTML scraping
+const cheerio = require('cheerio'); 
 const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors()); // Enable CORS for all routes
+app.use(cors()); 
 
-// Function to construct Ballotpedia URL for House elections
+
 function constructBallotpediaHouseURL(state, district) {
   const stateFormatted = state.replace(" ", "_");
   if (state.endsWith("s")) {
@@ -18,7 +18,7 @@ function constructBallotpediaHouseURL(state, district) {
   }
 }
 
-// Function to scrape House candidates
+
 async function scrapeHouseCandidates(ballotpediaURL) {
   try {
     const response = await axios.get(ballotpediaURL);
@@ -50,13 +50,13 @@ async function scrapeHouseCandidates(ballotpediaURL) {
   }
 }
 
-// Function to construct Ballotpedia URL for Senate elections
+
 function constructSenateBallotpediaURL(state) {
   const stateFormatted = state.replace(" ", "_");
   return `https://ballotpedia.org/United_States_Senate_election_in_${stateFormatted},_2024`;
 }
 
-// Function to scrape Senate candidates
+
 async function scrapeSenateCandidates(state) {
   const url = constructSenateBallotpediaURL(state);
   try {
@@ -69,7 +69,7 @@ async function scrapeSenateCandidates(state) {
     const resultsTable = generalElectionSection.next('table');
 
     if (resultsTable.length) {
-      const candidateRows = resultsTable.find('tr.results_row').slice(0, 2); // First 2 candidates
+      const candidateRows = resultsTable.find('tr.results_row').slice(0, 2); 
       candidateRows.each((index, row) => {
         const candidateName = $(row).find('a').first().text().trim();
         const candidateLink = $(row).find('a').first().attr('href');
@@ -89,29 +89,29 @@ async function scrapeSenateCandidates(state) {
   }
 }
 
-// Route to fetch House and Senate candidates
+
 app.get('/api/elections', async (req, res) => {
   const { state, district } = req.query;
 
-  // Validate input
+  
   if (!state || !district) {
     return res.status(400).json({ error: 'State and district parameters are required.' });
   }
 
-  // Scrape House and Senate candidates
+  
   const houseURL = constructBallotpediaHouseURL(state, district);
   const houseCandidates = await scrapeHouseCandidates(houseURL);
 
   const senateCandidates = await scrapeSenateCandidates(state);
 
-  // Send the scraped data back to the frontend
+  
   res.json({
     houseCandidates,
     senateCandidates,
   });
 });
 
-// Start the server
+
 app.listen(PORT, () => {
   console.log(`Backend is running on port ${PORT}`);
 });

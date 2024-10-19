@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Function to scrape voter information for a given state
+
 def scrape_voter_info(state_name):
-    # Format the state name to match Ballotpedia's URL format
+    
     state_formatted = state_name.replace(" ", "_")
     url = f"https://ballotpedia.org/{state_formatted}_State_Senate_elections,_2024"
 
@@ -13,17 +13,17 @@ def scrape_voter_info(state_name):
 
         voter_info = []
 
-        # Find the main container of the widget section
+        
         widget_rows = soup.find_all('div', class_='vis_widget_row')
 
-        # Extract each row's description and value
+        
         for row in widget_rows:
             desc = row.find('div', class_='vis_widget_desc')
             value = row.find('div', class_='vis_widget_value')
 
             if desc and value:
                 desc_text = desc.get_text(strip=True)
-                value_text = value.get_text(" | ", strip=True)  # Use " | " as separator for list items
+                value_text = value.get_text(" | ", strip=True)  
                 voter_info.append({desc_text: value_text})
 
         return voter_info
@@ -33,7 +33,7 @@ def scrape_voter_info(state_name):
 
 # Function to scrape the first two candidates from U.S. Senate general elections for a given state
 def scrape_senate_candidates(state_name):
-    # Format the state name to match Ballotpedia's URL format
+    
     state_formatted = state_name.replace(" ", "_")
     url = f"https://ballotpedia.org/United_States_Senate_election_in_{state_formatted},_2024"
 
@@ -43,7 +43,7 @@ def scrape_senate_candidates(state_name):
 
         candidates = []
 
-        # Search for general election sections and related tables
+        
         headers = soup.find_all('h5', class_='votebox-header-election-type')
         found_general_election = False
 
@@ -52,7 +52,7 @@ def scrape_senate_candidates(state_name):
                 found_general_election = True
                 results_table = header.find_next('table')
                 if results_table:
-                    # Get the first 2 candidates
+                    
                     candidate_rows = results_table.find_all('tr', class_='results_row')[:2]
                     for row in candidate_rows:
                         candidate_name = row.find('a').get_text(strip=True)
@@ -65,7 +65,7 @@ def scrape_senate_candidates(state_name):
                             'link': f"https://ballotpedia.org{candidate_link}"
                         })
 
-                    # Stop after fetching the first 2 candidates
+                    
                     break
 
         if not found_general_election:
@@ -76,7 +76,7 @@ def scrape_senate_candidates(state_name):
         print(f"Failed to access {url}")
         return []
 
-# Testing the scraping functions
+
 if __name__ == "__main__":
     state = input("Enter your state (e.g., Texas): ")
     voter_info = scrape_voter_info(state)

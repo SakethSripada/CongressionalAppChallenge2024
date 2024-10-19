@@ -13,7 +13,7 @@ def get_full_party_name(party_abbreviation):
     return party_map.get(party_abbreviation, party_abbreviation)
 
 def scrape_municipal_candidates(county, state):
-    # Construct the URL for the municipal elections page
+    
     url = f"https://ballotpedia.org/Municipal_elections_in_{county.replace(' ', '_')},_{state.replace(' ', '_')}_(2024)"
     print(f"Accessing URL: {url}")  # Debug statement
 
@@ -24,14 +24,14 @@ def scrape_municipal_candidates(county, state):
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Scrape candidates
+    
     candidates = []
     election_headers = soup.find_all('h5', class_='votebox-header-election-type')
 
     for header in election_headers:
         if 'general election' in header.text.lower():
-            election_name = header.text.strip()  # Capture the election name
-            # Extract candidates from the corresponding section
+            election_name = header.text.strip()  
+            
             candidates_table = header.find_next('table')
             if candidates_table:
                 candidate_rows = candidates_table.find_all('tr', class_='results_row')
@@ -39,17 +39,17 @@ def scrape_municipal_candidates(county, state):
                     name_link = row.find('td', class_='votebox-results-cell--text').find('a')
                     if name_link:
                         name = name_link.text.strip()
-                        # Find party information in the same <td> element, after the link
+                        
                         party_text = row.find('td', class_='votebox-results-cell--text').text.strip()
-                        party_symbol = party_text.split()[-1]  # Extract the last part for party
-                        party_symbol = party_symbol.replace("(", "").replace(")", "").strip()  # Clean up party symbol
-                        full_party_name = get_full_party_name(party_symbol)  # Get full party name
-                        # Remove the extra "https://ballotpedia.org" from the link
+                        party_symbol = party_text.split()[-1]  
+                        party_symbol = party_symbol.replace("(", "").replace(")", "").strip()  
+                        full_party_name = get_full_party_name(party_symbol)  
+                        
                         candidates.append({
                             'name': name,
-                            'party': full_party_name,  # Store the full party name
-                            'link': name_link['href'],  # Use the href directly from the <a> tag
-                            'election': election_name  # Include election name in the candidate details
+                            'party': full_party_name,  
+                            'link': name_link['href'],  
+                            'election': election_name  
                         })
 
     print("Candidates:")
@@ -71,7 +71,7 @@ def scrape_municipal_candidates(county, state):
                     value_texas = cells[1].text.strip()
                     demographics.append({'label': label, 'value': f"{value_collin} (Collin County), {value_texas} (Texas)"})
 
-    # Print final demographics table
+    
     print("\nDemographic Information:")
     if demographics:
         print(f"{'Demographic':<40} {'Value'}")
@@ -83,7 +83,7 @@ def scrape_municipal_candidates(county, state):
 
     return {'candidates': candidates, 'demographics': demographics}
 
-# Example call to the function (for testing)
+
 if __name__ == "__main__":
     county = "Collin County"
     state = "Texas"
