@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS  
 from house_scraper import scrape_house_candidates
 from senate_scraper import scrape_senate_candidates, scrape_voter_info
 from municipal_scraper import scrape_municipal_candidates  

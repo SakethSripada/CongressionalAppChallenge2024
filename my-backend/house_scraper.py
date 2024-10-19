@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Step 1: Construct Ballotpedia URL based on state and congressional district
 def construct_ballotpedia_url(state, district):
     
     state_formatted = state.replace(" ", "_")
@@ -14,7 +13,6 @@ def construct_ballotpedia_url(state, district):
     
     return url
 
-# Step 2: Scrape Ballotpedia to get the first two candidates
 def scrape_house_candidates(state, district):
     ballotpedia_url = construct_ballotpedia_url(state, district)
     response = requests.get(ballotpedia_url)

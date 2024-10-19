@@ -88,7 +88,7 @@ const LocalPage = () => {
   useEffect(() => {
     if (address) {
       const fetchLocalReps = async () => {
-        setLoading(true); // Set loading to true before fetching data
+        setLoading(true); 
         console.log('Fetching local representatives for address:', address);
         
         try {
@@ -121,7 +121,6 @@ const LocalPage = () => {
           setLocalReps(local);
           setErrorMessage('');
 
-          // Extract county and state for municipal candidates
           const { county, state } = extractStateAndCounty(response.data);
           console.log('Extracted County:', county);
           console.log('Extracted State:', state);
@@ -136,7 +135,7 @@ const LocalPage = () => {
           console.error('Error fetching local representatives:', error);
           setErrorMessage('Error fetching local representatives. Please try again later.');
         } finally {
-          setLoading(false); // Set loading to false after fetching data
+          setLoading(false); 
         }
       };
 
@@ -149,22 +148,18 @@ const LocalPage = () => {
     let county = null;
     let stateAbbreviation = null;
   
-    // Check for county and state information
     Object.keys(divisions).forEach((divisionId) => {
       if (divisionId.includes('county:')) {
-        county = divisions[divisionId].name.split(' ').slice(0, 2).join(' '); // Get first two words for county
+        county = divisions[divisionId].name.split(' ').slice(0, 2).join(' ');
       } else if (divisionId.includes('state:')) {
-        stateAbbreviation = divisionId.split(':')[2]; // Extract the abbreviation (e.g., 'tx')
+        stateAbbreviation = divisionId.split(':')[2]; 
       }
     });
   
-    // Get the state abbreviation from normalizedInput
-    const normalizedStateAbbreviation = data.normalizedInput.state; // Extract state abbreviation directly
+    const normalizedStateAbbreviation = data.normalizedInput.state; 
   
-    // Map the abbreviation to the full state name
     const fullStateName = stateAbbreviationMap[normalizedStateAbbreviation.toUpperCase()] || 'Unknown State';
   
-    // Set the county and full state name in the state
     setCounty(county);
     setFullStateName(fullStateName);
   
@@ -176,7 +171,7 @@ const LocalPage = () => {
 
   const fetchMunicipalCandidates = async (county, state) => {
     try {
-      const countyTrimmed = county.split(' ').slice(0, 2).join(' '); // Trim to first two words
+      const countyTrimmed = county.split(' ').slice(0, 2).join(' ');
       console.log('Fetching municipal candidates from backend for County:', countyTrimmed, 'State:', state);
       const url = `http://localhost:5000/api/municipal_candidates?county=${encodeURIComponent(countyTrimmed)}&state=${encodeURIComponent(state)}`;
       console.log('Requesting municipal candidates from URL:', url);
@@ -192,7 +187,6 @@ const LocalPage = () => {
     }
   };
 
-  // Group municipal candidates by election title
   const groupCandidatesByElection = () => {
     return municipalCandidates.reduce((acc, candidate) => {
       const election = candidate.election;
@@ -209,7 +203,7 @@ const LocalPage = () => {
   return (
     <Box 
       sx={{ 
-        background: 'linear-gradient(to right, rgba(255, 102, 102, 0.5), rgba(255, 255, 255, 0.5), rgba(102, 153, 255, 0.5))', // Lighter background gradient        
+        background: 'linear-gradient(to right, rgba(255, 102, 102, 0.5), rgba(255, 255, 255, 0.5), rgba(102, 153, 255, 0.5))',       
         minHeight: '100vh', 
         py: 8 
       }}
@@ -242,10 +236,10 @@ const LocalPage = () => {
                 <Grid item xs={12} sm={6} md={4} key={index}>
                   <Card sx={{
                     borderRadius: '10px', 
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', // Softer shadow
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                     transition: 'transform 0.3s, box-shadow 0.3s',
                     '&:hover': {
-                      transform: 'translateY(-5px)', // Subtle lift on hover
+                      transform: 'translateY(-5px)', 
                       boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
                     }
                   }} elevation={0}>
@@ -279,7 +273,6 @@ const LocalPage = () => {
 
         <Divider sx={{ my: 8 }} />
 
-        {/* Municipal Candidates Section */}
         <Box sx={{ marginTop: '50px' }}>
           <Typography variant="h4" gutterBottom>
             Municipal Candidates
@@ -302,7 +295,6 @@ const LocalPage = () => {
           )}
         </Box>
 
-        {/* Demographics Section */}
         <Box sx={{ marginTop: '50px' }}>
           <Typography variant="h4" gutterBottom>
             Demographic Information

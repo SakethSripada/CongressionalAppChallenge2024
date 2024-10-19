@@ -9,7 +9,6 @@ import NewspaperIcon from '@mui/icons-material/Newspaper';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import PersonIcon from '@mui/icons-material/Person';
 
-// Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   marginBottom: theme.spacing(4),
@@ -202,7 +201,6 @@ const StatePage = () => {
       }}
     >
       <Container maxWidth="lg" sx={{ py: 8 }}>
-        {/* Page Header */}
         <Box sx={{ textAlign: 'center', marginBottom: '30px' }}>
           <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 900, color: '#333', fontFamily: "'Playfair Display', serif", fontSize: { xs: '3rem', md: '4.5rem' }, textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
             State Elections
@@ -212,7 +210,6 @@ const StatePage = () => {
           </Typography>
         </Box>
 
-        {/* State Representatives Section */}
         <StyledPaper>
           <SectionTitle variant="h4">
             <PersonIcon sx={{ verticalAlign: 'middle', marginRight: 1 }} />
@@ -247,7 +244,6 @@ const StatePage = () => {
           )}
         </StyledPaper>
 
-        {/* Important Dates Section */}
         <Grid container spacing={4} sx={{ marginTop: '50px' }}>
           <Grid item xs={12} md={6}>
             <StyledPaper>
@@ -270,7 +266,6 @@ const StatePage = () => {
             </StyledPaper>
           </Grid>
 
-          {/* State Election News */}
           <Grid item xs={12} md={6}>
             <StyledPaper>
               <SectionTitle variant="h4">
@@ -295,7 +290,6 @@ const StatePage = () => {
           </Grid>
         </Grid>
 
-        {/* Election Guides Section */}
         <StyledPaper sx={{ mt: 4 }}>
           <SectionTitle variant="h4">
             <HowToVoteIcon sx={{ verticalAlign: 'middle', marginRight: 1 }} />
@@ -314,7 +308,6 @@ const StatePage = () => {
           </Box>
         </StyledPaper>
 
-        {/* Election Candidates Section */}
         <StyledPaper sx={{ mt: 4 }}>
           <SectionTitle variant="h4">
             Election Candidates
@@ -344,7 +337,6 @@ const StatePage = () => {
           </Box>
         </StyledPaper>
 
-        {/* Voter Information Section */}
         <StyledPaper sx={{ mt: 4 }}>
           <SectionTitle variant="h4">
             Voter Information

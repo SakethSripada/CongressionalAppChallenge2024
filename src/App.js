@@ -7,7 +7,7 @@ import StatePage from './Pages/StatePage';
 import NationalPage from './Pages/NationalPage';
 import Chatbot from './Components/Chatbot'; 
 import ChatButton from './Components/ChatButton';  
-import { AddressProvider } from './Context/AddressContext';  // Import the AddressProvider
+import { AddressProvider } from './Context/AddressContext';  
 
 const App = () => (
   <AddressProvider>

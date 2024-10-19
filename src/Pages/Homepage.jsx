@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Button, Grid, Card, CardContent, CardMedia, CardActions } from '@mui/material';
 import '../App.css';
-
+import EmailSignup from '../Components/EmailSignup';
 
 
 
@@ -13,27 +13,160 @@ const Homepage = () => {
       <source src="/videos/home_background.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    <div className="video-overlay"></div> {/* Overlay div */}
+    <div className="video-overlay"></div> 
     </div>
-    <div className="content-container"> {/* Container for all content */}
+    <div className="content-container"> 
     
     <Container maxWidth="lg" sx={{ paddingTop: '50px' }}>
       
       <Box sx={{ textAlign: 'center', marginBottom: '50px' }}>
         <Typography variant="h2" component="h1" gutterBottom>
-          Welcome to the Voting App
+          Welcome to CivicCompass
         </Typography>
         <Typography variant="h6" color="white" paragraph>
           Stay updated with the latest election information, political news, and voting locations.
         </Typography>
-        <Button variant="contained" color="primary" size="large">
-          Get Started
-        </Button>
+        <EmailSignup />
       </Box>
 
-      
+      <Box>
+        <Grid container spacing={4}>
+          
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Election Info"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Election Information
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Get the latest updates on upcoming elections, candidates, and results across the country.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">Learn More</Button>
+              </CardActions>
+            </Card>
+          </Grid>
 
-      {/* Call to Action */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Political News"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Political News
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Stay informed with the latest political news from local, state, and federal levels.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">Read News</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Voting Locations"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Find Voting Locations
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Use our tool to locate the nearest polling stations in your area for upcoming elections.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">Find Locations</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Voter Registration"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Register to Vote
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Make sure you're registered to vote. Our platform helps you check and update your registration.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">Register</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Candidate Information"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Candidate Information
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Learn more about the candidates running in the upcoming elections.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">View Candidates</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/300x200"
+                alt="Election Resources"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Election Resources
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Access resources for election preparation, including voting guides and sample ballots.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button size="small" color="primary">Access Resources</Button>
+              </CardActions>
+            </Card>
+          </Grid>
+
+        </Grid>
+      </Box>
+
       <Box sx={{ textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
         <Typography variant="h4" component="h2" gutterBottom>
           Ready to Participate in the Election?

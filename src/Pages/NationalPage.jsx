@@ -34,7 +34,7 @@ const NationalPage = () => {
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
           });
-          console.log('National representatives response:', response.data); // Log the response data
+          console.log('National representatives response:', response.data); 
 
           const offices = response.data.offices;
           const officials = response.data.officials;
@@ -74,7 +74,7 @@ const NationalPage = () => {
           const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
             params: { address, electionId: 9000, key: civicAPIKey }
           });
-          console.log('Voter information response:', response.data); // Log the response data
+          console.log('Voter information response:', response.data); 
 
           setVoterInfo(response.data);
         } catch (error) {
@@ -100,7 +100,6 @@ const NationalPage = () => {
     >
       <Container maxWidth="lg" sx={{ paddingY: 8 }}>
         
-        {/* Header */}
         <Box sx={{ textAlign: 'center', marginBottom: '40px' }}>
           <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold' }}>
             National Elections
@@ -110,7 +109,6 @@ const NationalPage = () => {
           </Typography>
         </Box>
 
-        {/* National Representatives */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Your National Representatives
@@ -159,7 +157,6 @@ const NationalPage = () => {
           )}
         </Box>
 
-        {/* Election Information */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             General Election Information
@@ -172,7 +169,6 @@ const NationalPage = () => {
           ) : voterInfo ? (
             <Box>
               <Grid container spacing={4}>
-                {/* Election Information Section */}
                 <Grid item xs={12}>
                   <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
                     <Typography variant="h5" gutterBottom>Election Information</Typography>
@@ -181,7 +177,6 @@ const NationalPage = () => {
                   </Paper>
                 </Grid>
 
-                {/* Polling Locations Section */}
                 <Grid item xs={12}>
                   <Typography variant="h5" gutterBottom>Polling Locations</Typography>
                   {voterInfo.pollingLocations?.length > 0 ? (
@@ -199,7 +194,6 @@ const NationalPage = () => {
                   )}
                 </Grid>
 
-                {/* Election Administration Section */}
                 {voterInfo.state?.map((stateInfo, index) => (
                   <Grid item xs={12} key={index}>
                     <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
@@ -241,7 +235,6 @@ const NationalPage = () => {
             </Typography>
           )}
         </Box>
-        {/* Public Opinion Polls Section */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Public Opinion Polls

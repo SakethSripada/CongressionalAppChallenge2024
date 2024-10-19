@@ -31,7 +31,6 @@ def scrape_voter_info(state_name):
         print(f"Failed to access {url}")
         return []
 
-# Function to scrape the first two candidates from U.S. Senate general elections for a given state
 def scrape_senate_candidates(state_name):
     
     state_formatted = state_name.replace(" ", "_")
