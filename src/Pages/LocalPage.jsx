@@ -15,10 +15,15 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  TableContainer,
+  Button,
 } from '@mui/material';
 import { AddressContext } from '../Context/AddressContext';  
 import axios from 'axios';
+import InfoIcon from '@mui/icons-material/Info';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
 
 const stateAbbreviationMap = {
   AL: 'Alabama',
@@ -347,62 +352,259 @@ const LocalPage = () => {
           </Grid>
         </Box>
 
-        <Divider sx={{ my: 8 }} />
+        <Divider sx={{ my: 5 }} />
 
-        <Box sx={{ marginTop: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#fff' }}>
-            Municipal Candidates
-          </Typography>
-          {Object.keys(candidatesByElection).length > 0 ? (
-            Object.entries(candidatesByElection).map(([election, candidates], index) => (
-              <Box key={index} sx={{ marginBottom: '30px' }}>
-                <Typography variant="h5" sx={{ color: '#fff' }}>{election}</Typography>
-                {candidates.map((candidate, idx) => (
-                  <Typography key={idx} sx={{ color: '#fff' }}>
-                    {candidate.name} ({candidate.party}) - <Link href={candidate.link} target="_blank" rel="noopener noreferrer">More Info</Link>
+        <Box sx={{ mt: 8 }}>
+  <Typography
+    variant="h4"
+    gutterBottom
+    sx={{
+      fontWeight: 'medium',
+      mb: 4,
+      fontFamily: "'Playfair Display', serif",
+      color: '#fff',
+    }}
+  >
+    Municipal Candidates
+  </Typography>
+
+  {Object.keys(candidatesByElection).length > 0 ? (
+    Object.entries(candidatesByElection).map(([election, candidates]) => (
+      <Box key={election} sx={{ mb: 4 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 'medium',
+            mb: 2,
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            textTransform: 'uppercase',
+            borderBottom: '2px solid #fff',
+            paddingBottom: '5px',
+          }}
+        >
+          {election}
+        </Typography>
+        <Grid container spacing={4}>
+          {candidates.map((candidate, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card
+                sx={{
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
+                  },
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                }}
+                elevation={0}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, color: '#333' }}
+                  >
+                    {candidate.name}
                   </Typography>
-                ))}
-              </Box>
-            ))
-          ) : (
-            <Typography variant="body1" color="textSecondary">
-              No municipal candidates found.
-            </Typography>
-          )}
-        </Box>
+                  <Chip
+                    label={candidate.party}
+                    color={candidate.party === 'Democratic' ? 'primary' : 'secondary'}
+                    size="small"
+                    sx={{ mb: 2, fontFamily: "'Roboto', sans-serif" }}
+                  />
+                  <Link
+                    href={candidate.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: 'primary.main',
+                      textDecoration: 'underline',
+                      fontFamily: "'Roboto', sans-serif",
+                      display: 'block',
+                      mt: 2,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    More Information
+                  </Link>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    ))
+  ) : (
+    <Grid item xs={12}>
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        align="center"
+        sx={{ fontFamily: "'Roboto', sans-serif", color: '#fff' }}
+      >
+        No municipal candidates found for the provided address.
+      </Typography>
+    </Grid>
+  )}
+</Box>
+<Divider sx={{ my: 5 }} />
+<Box sx={{ marginTop: '50px' }}>
+  <Typography variant="h4" gutterBottom sx={{ color: '#fff', fontFamily: "'Playfair Display', serif" }}>
+    Demographic Information
+  </Typography>
+  {demographics.length > 0 ? (
+    <Grid container spacing={4}>
+      <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2, height: '400px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Population</Typography>
+          <ResponsiveContainer width="100%" height="90%" >
+            <BarChart
+              data={demographics.filter(item => item.label === 'Population').map(item => ({
+                name: item.label,
+                [county]: parseInt(item.value.split(', ')[0].replace(/,/g, '')),
+                [fullStateName]: parseInt(item.value.split(', ')[1].replace(/,/g, ''))
+              }))}
+              margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
 
-        <Box sx={{ marginTop: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#fff' }}>
-            Demographic Information
-          </Typography>
-          {demographics.length > 0 ? (
-            <Table component={Paper}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Label</TableCell>
-                  <TableCell>{county}</TableCell>
-                  <TableCell>{fullStateName}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {demographics.map((item, index) => {
-                  const [countyValue, stateValue] = item.value.split(', ');
-                  return (
-                    <TableRow key={index}>
-                      <TableCell>{item.label}</TableCell>
-                      <TableCell>{countyValue.split(' (')[0]}</TableCell>
-                      <TableCell>{stateValue.split(' (')[0]}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          ) : (
-            <Typography variant="body1" color="textSecondary">
-              No demographic information available.
-            </Typography>
-          )}
-        </Box>
+      <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2, height: '400px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Land Area (sq mi)</Typography>
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              data={demographics.filter(item => item.label === 'Land area (sq mi)').map(item => ({
+                name: item.label,
+                [county]: parseFloat(item.value.split(', ')[0]),
+                [fullStateName]: parseFloat(item.value.split(', ')[1])
+              }))}
+              margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2, height: '500px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Racial and Ethnic Composition (%)</Typography>
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              data={demographics.filter(item => ['White', 'Black/African American', 'Asian', 'Native American', 'Pacific Islander', 'Two or more', 'Hispanic/Latino'].includes(item.label)).map(item => ({
+                name: item.label,
+                [county]: parseFloat(item.value.split(', ')[0]),
+                [fullStateName]: parseFloat(item.value.split(', ')[1])
+              }))}
+              layout="vertical"
+              margin={{ top: 20, right: 20, bottom: 50, left: 70 }}
+            >
+              <XAxis type="number" unit="%" />
+              <YAxis dataKey="name" type="category" width={150} />
+              <Tooltip formatter={(value) => `${value}%`} />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2, height: '400px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Education (%)</Typography>
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              data={demographics.filter(item => ['High school graduation rate', 'College graduation rate'].includes(item.label)).map(item => ({
+                name: item.label,
+                [county]: parseFloat(item.value.split(', ')[0]),
+                [fullStateName]: parseFloat(item.value.split(', ')[1])
+              }))}
+              margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis unit="%" />
+              <Tooltip formatter={(value) => `${value}%`} />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2, height: '400px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Median Household Income ($)</Typography>
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              data={demographics.filter(item => item.label === 'Median household income').map(item => ({
+                name: item.label,
+                [county]: parseInt(item.value.split(', ')[0].replace(/[^0-9]/g, '')),
+                [fullStateName]: parseInt(item.value.split(', ')[1].replace(/[^0-9]/g, ''))
+              }))}
+              margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2, height: '400px' }}>
+          <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>Persons Below Poverty Level (%)</Typography>
+          <ResponsiveContainer width="100%" height="90%">
+            <BarChart
+              data={demographics.filter(item => item.label === 'Persons below poverty level').map(item => ({
+                name: item.label,
+                [county]: parseFloat(item.value.split(', ')[0]),
+                [fullStateName]: parseFloat(item.value.split(', ')[1])
+              }))}
+              margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
+            >
+              <XAxis dataKey="name" />
+              <YAxis unit="%" />
+              <Tooltip formatter={(value) => `${value}%`} />
+              <Legend />
+              <Bar dataKey={county} fill="#140a35" />
+              <Bar dataKey={fullStateName} fill="#f8b231" />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
+      </Grid>
+
+
+    </Grid>
+  ) : (
+    <Typography variant="body1" color="textSecondary" sx={{ fontFamily: "'Roboto', sans-serif" }}>
+      No demographic information available.
+    </Typography>
+  )}
+</Box>
+
+
       </Container>
     </Box>
   );

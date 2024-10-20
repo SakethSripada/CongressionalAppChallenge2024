@@ -268,28 +268,7 @@ const StatePage = () => {
         </StyledPaper>
 
 
-          <Grid item xs={12} md={6}>
-            <StyledPaper>
-              <SectionTitle variant="h4">
-                <NewspaperIcon sx={{ verticalAlign: 'middle', marginRight: 1 }} />
-                State Election News
-              </SectionTitle>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {[
-                  { title: 'Election Law Changes', date: 'August 1, 2023' },
-                  { title: 'Gubernatorial Debate', date: 'September 15, 2023' },
-                ].map((item, index) => (
-                  <Box key={index}>
-                    <Typography variant="h6" sx={{ fontWeight: 500, color: '#333', marginBottom: 1 }}>{item.title}</Typography>
-                    <Typography variant="body2" sx={{ color: '#666' }}>{item.date}</Typography>
-                    <Typography variant="body1" sx={{ color: '#444', marginTop: 1 }}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </StyledPaper>
-          </Grid>
+
         
 
 
