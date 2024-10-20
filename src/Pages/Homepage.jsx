@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Button, Grid, Card, CardContent, CardMedia, CardActions, CircularProgress } from '@mui/material';
+import { Container, Typography, Box, Button, Grid, Card, CardContent, CardMedia, CardActions, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
 import '../App.css';
 import EmailSignup from '../Components/EmailSignup';
@@ -7,12 +7,20 @@ import EmailSignup from '../Components/EmailSignup';
 const Homepage = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // New state for error handling
 
   // Fetch U.S. election news from non-paywalled sources using NewsAPI
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const apiKey = process.env.REACT_APP_NEWS_API_KEY;
+        
+        if (!apiKey) {
+          console.error('API key is missing. Please add your NewsAPI key to the .env file.');
+          setError('Missing API key. Please check your configuration.');
+          setLoading(false);
+          return;
+        }
 
         // List of neutral, non-paywalled, reputable sources for U.S. election news
         const nonPaywalledSources = [
@@ -31,9 +39,17 @@ const Homepage = () => {
         ].join(',');
 
         // API request for US election news from trusted, non-paywalled sources
+        console.log('Fetching news from NewsAPI...');
         const response = await axios.get(
           `https://newsapi.org/v2/everything?q="us+elections"&language=en&sortBy=publishedAt&sources=${nonPaywalledSources}&apiKey=${apiKey}`
         );
+
+        if (response.data.status !== 'ok') {
+          console.error('Unexpected response from NewsAPI:', response.data);
+          setError('Failed to retrieve news. Please try again later.');
+          setLoading(false);
+          return;
+        }
 
         // Filter to remove duplicates based solely on titles
         const uniqueArticles = [];
@@ -46,9 +62,15 @@ const Homepage = () => {
           }
         });
 
+        if (uniqueArticles.length === 0) {
+          console.warn('No unique articles found. The fetched news might be empty or duplicate.');
+          setError('No news articles available at the moment.');
+        }
+
         setNews(uniqueArticles);
       } catch (error) {
         console.error('Error fetching news:', error);
+        setError('Error fetching news. Please check your internet connection and API configuration.');
       } finally {
         setLoading(false);
       }
@@ -83,10 +105,15 @@ const Homepage = () => {
             <Typography variant="h4" component="h2" gutterBottom sx={{ textAlign: 'center', marginBottom: '30px' }}>
               Latest U.S. Election News
             </Typography>
+
             {loading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
                 <CircularProgress />
               </Box>
+            ) : error ? (
+              <Alert severity="error" sx={{ marginBottom: '20px', textAlign: 'center' }}>
+                {error}
+              </Alert>
             ) : (
               <Grid container spacing={4}>
                 {news.map((article, index) => (
@@ -129,10 +156,17 @@ const Homepage = () => {
             <Typography variant="h4" component="h2" gutterBottom>
               Ready to Participate in the Election?
             </Typography>
-            <Button variant="contained" color="secondary" size="large" component="a" href="https://www.whenweallvote.org/" target="_blank" rel="noopener noreferrer">
+            <Button 
+              variant="contained" 
+              color="secondary" 
+              size="large" 
+              component="a" 
+              href="https://www.whenweallvote.org/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
               Get Involved Now
             </Button>
-
           </Box>
         </Container>
       </div>
