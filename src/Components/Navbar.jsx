@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   AppBar,
@@ -22,6 +22,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';
@@ -40,11 +41,19 @@ const Navbar = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [manualAddress, setManualAddress] = useState('');
+  const [showArrow, setShowArrow] = useState(true);
 
   const { setAddress } = useContext(AddressContext);
   const geocodingAPIKey = process.env.REACT_APP_GEOCODING_API_KEY;
 
+  useEffect(() => {
+    // Auto-hide the arrow after 5 seconds
+    const timer = setTimeout(() => setShowArrow(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLocationClick = () => {
+    setShowArrow(false); // Hide the arrow once the button is clicked
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -90,11 +99,16 @@ const Navbar = () => {
   };
 
   const handleAddressSubmit = () => {
-    setAddress(manualAddress);
-    setSnackbarMessage(`Address entered: ${manualAddress}`);
+    if (!manualAddress) {
+      setSnackbarMessage("Please enter your address. Example: 1600 Pennsylvania Ave NW, Washington, DC 20500");
+    } else {
+      setAddress(manualAddress);
+      setSnackbarMessage(`Address entered: ${manualAddress}`);
+    }
     setSnackbarOpen(true);
     setDialogOpen(false);
   };
+  
 
   return (
     <AppBar position="fixed" sx={{ boxShadow: 0, bgcolor: 'transparent', mt: 1.5, overflow: 'hidden'}}>
@@ -179,7 +193,34 @@ const Navbar = () => {
 
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+            {showArrow && (
+              <Box 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '50%', 
+                  right: 80, 
+                  transform: 'translateY(-50%)',
+                  display: 'flex', 
+                  alignItems: 'center' 
+                }}
+              >
+                <ArrowForwardIcon 
+                  sx={{ 
+                    fontSize: 40, 
+                    color: 'yellow', 
+                    animation: 'bounce 1s infinite',
+                    '@keyframes bounce': {
+                      '0%, 100%': { transform: 'translateY(0)' },
+                      '50%': { transform: 'translateY(-5px)' },
+                    },
+                  }} 
+                />
+                <Typography variant="body2" sx={{ color: 'yellow', ml: 1 }}>
+                  Click here
+                </Typography>
+              </Box>
+            )}
             <IconButton color="inherit" onClick={handleLocationClick}>
               <LocationOnIcon />
             </IconButton>
@@ -266,7 +307,6 @@ const Navbar = () => {
         </Box>
       </Drawer>
 
-
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Enter Address</DialogTitle>
         <DialogContent>
@@ -278,6 +318,10 @@ const Navbar = () => {
             label="Address"
             placeholder="e.g. 1600 Pennsylvania Ave NW, Washington, DC 20500"
           />
+          {/* Example address displayed below the input field */}
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            Example: 1600 Pennsylvania Ave NW, Washington, DC 20500
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)} color="secondary">Cancel</Button>
