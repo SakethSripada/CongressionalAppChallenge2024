@@ -5,6 +5,7 @@ import Homepage from './Pages/Homepage';
 import LocalPage from './Pages/LocalPage';
 import StatePage from './Pages/StatePage';
 import NationalPage from './Pages/NationalPage';
+import NewVotersPage from './Pages/NewVotersPage';
 import Chatbot from './Components/Chatbot'; 
 import ChatButton from './Components/ChatButton';  
 import { AddressProvider } from './Context/AddressContext';
@@ -20,7 +21,7 @@ const App = () => (
         <Route path="/local" element={<LocalPage />} />
         <Route path="/state" element={<StatePage />} />
         <Route path="/national" element={<NationalPage />} />
-        <Route path="/link4" element={<div>Link 4 Page</div>} />
+        <Route path="/new-voters" element={<NewVotersPage/>} />
       </Routes>
     </Router>
   </AddressProvider>

@@ -159,6 +159,22 @@ const Navbar = () => {
               >
                 National
               </Button>
+              
+              <Button 
+                component={Link} 
+                to="/new-voters" 
+                color="inherit" 
+                sx={{ 
+                  transition: 'background-color 0.3s, color 0.3s',
+                  '&:hover': { 
+                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
+                    color: 'white',
+                  } 
+                }}
+              >
+                New Voters
+              </Button>
+
             </Box>
 
           </Box>
