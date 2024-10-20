@@ -29,9 +29,9 @@ import { AddressContext } from '../Context/AddressContext';
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor: theme.palette.background.default, // Set a background color for the middle section
-  padding: '0 16px', // Add some padding
-  boxShadow: theme.shadows[2], // Optional: add a shadow for a floating effect
+  backgroundColor: theme.palette.background.default, 
+  padding: '0 16px', 
+  boxShadow: theme.shadows[2], 
 }));
 
 const Navbar = () => {
@@ -110,8 +110,8 @@ const Navbar = () => {
                 sx={{ 
                   transition: 'background-color 0.3s, color 0.3s',
                   '&:hover': { 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', // Light background on hover
-                    color: 'white', // Change text color on hover
+                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
+                    color: 'white', 
                   } 
                 }}
               >
@@ -178,9 +178,9 @@ const Navbar = () => {
         <Box 
           sx={{ 
             width: 250, 
-            bgcolor: 'primary.main', // Set background color to primary color
-            color: 'white', // Optional: Change text color to white
-            height: '100%', // Make sure it takes full height
+            bgcolor: 'primary.main', 
+            color: 'white', 
+            height: '100%', 
           }}
         >
           <Box sx={{ padding: 2, display: 'flex', justifyContent: 'center' }}>
@@ -198,7 +198,7 @@ const Navbar = () => {
               sx={{ 
                 color: 'white', 
                 '&:hover': { 
-                  bgcolor: 'rgba(255, 255, 255, 0.1)', // Change this to your desired hover color
+                  bgcolor: 'rgba(255, 255, 255, 0.1)', 
                 },
               }}
             >
@@ -214,7 +214,7 @@ const Navbar = () => {
               sx={{ 
                 color: 'white', 
                 '&:hover': { 
-                  bgcolor: 'rgba(255, 255, 255, 0.1)', // Change this to your desired hover color
+                  bgcolor: 'rgba(255, 255, 255, 0.1)', 
                 },
               }}
             >
@@ -227,7 +227,7 @@ const Navbar = () => {
               sx={{ 
                 color: 'white', 
                 '&:hover': { 
-                  bgcolor: 'rgba(255, 255, 255, 0.1)', // Change this to your desired hover color
+                  bgcolor: 'rgba(255, 255, 255, 0.1)', 
                 },
               }}
             >
@@ -240,7 +240,7 @@ const Navbar = () => {
               sx={{ 
                 color: 'white', 
                 '&:hover': { 
-                  bgcolor: 'rgba(255, 255, 255, 0.1)', // Change this to your desired hover color
+                  bgcolor: 'rgba(255, 255, 255, 0.1)', 
                 },
               }}
             >

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Button, Grid, Card, CardContent, CardMedia, CardActions } from '@mui/material';
 import '../App.css';
-
+import EmailSignup from '../Components/EmailSignup';
 
 
 
@@ -13,9 +13,9 @@ const Homepage = () => {
       <source src="/videos/home_background.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    <div className="video-overlay"></div> {/* Overlay div */}
+    <div className="video-overlay"></div> 
     </div>
-    <div className="content-container"> {/* Container for all content */}
+    <div className="content-container"> 
     
     <Container maxWidth="lg" sx={{ paddingTop: '50px' }}>
       
@@ -26,16 +26,12 @@ const Homepage = () => {
         <Typography variant="h6" color="white" paragraph>
           Stay updated with the latest election information, political news, and voting locations.
         </Typography>
-        <Button variant="contained" color="primary" size="large">
-          Get Started
-        </Button>
+        <EmailSignup />
       </Box>
 
-      {/* Cards Section */}
       <Box>
         <Grid container spacing={4}>
           
-          {/* Card 1 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -58,7 +54,6 @@ const Homepage = () => {
             </Card>
           </Grid>
 
-          {/* Card 2 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -81,7 +76,6 @@ const Homepage = () => {
             </Card>
           </Grid>
 
-          {/* Card 3 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -104,7 +98,6 @@ const Homepage = () => {
             </Card>
           </Grid>
 
-          {/* Card 4 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -127,7 +120,6 @@ const Homepage = () => {
             </Card>
           </Grid>
 
-          {/* Card 5 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -150,7 +142,6 @@ const Homepage = () => {
             </Card>
           </Grid>
 
-          {/* Card 6 */}
           <Grid item xs={12} sm={6} md={4}>
             <Card>
               <CardMedia
@@ -176,7 +167,6 @@ const Homepage = () => {
         </Grid>
       </Box>
 
-      {/* Call to Action */}
       <Box sx={{ textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
         <Typography variant="h4" component="h2" gutterBottom>
           Ready to Participate in the Election?

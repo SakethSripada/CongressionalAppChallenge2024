@@ -1,12 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 
-# Step 1: Construct Ballotpedia URL based on state and congressional district
 def construct_ballotpedia_url(state, district):
-    # Format the state name for the URL
+    
     state_formatted = state.replace(" ", "_")
 
-    # Check if the state name ends in 's' and adjust the URL accordingly
+   
     if state.endswith('s'):
         url = f"https://ballotpedia.org/{state_formatted}%27_{district}_Congressional_District_election,_2024"
     else:
@@ -14,7 +13,6 @@ def construct_ballotpedia_url(state, district):
     
     return url
 
-# Step 2: Scrape Ballotpedia to get the first two candidates
 def scrape_house_candidates(state, district):
     ballotpedia_url = construct_ballotpedia_url(state, district)
     response = requests.get(ballotpedia_url)
@@ -24,7 +22,7 @@ def scrape_house_candidates(state, district):
 
         candidates = []
 
-        # Look for the general election section and extract the first two candidates
+        
         general_election_section = soup.find('h5', text=lambda t: 'general election' in t.lower())
         if general_election_section:
             results_table = general_election_section.find_next('table')
@@ -50,10 +48,4 @@ def scrape_house_candidates(state, district):
         print(f"Failed to access {ballotpedia_url}")
         return []
 
-# Example function to test scraping (optional for Flask integration)
-if __name__ == "__main__":
-    state = input("Enter your state (e.g., Texas): ")
-    district = input("Enter your congressional district (e.g., 3rd): ")
-    candidates = scrape_house_candidates(state, district)
-    for candidate in candidates:
-        print(f"{candidate['name']} ({candidate['party']}) - More info: {candidate['link']}")
+
