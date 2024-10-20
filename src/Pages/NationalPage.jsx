@@ -34,6 +34,7 @@ const NationalPage = () => {
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
           });
+          console.log('National representatives response:', response.data); 
 
           const offices = response.data.offices;
           const officials = response.data.officials;
@@ -57,6 +58,7 @@ const NationalPage = () => {
           setNationalReps(national);
         } catch (error) {
           console.error('Error fetching national representatives:', error);
+          setErrorMessage('Error fetching national representatives. Please try again later.');
         }
       };
 
@@ -72,6 +74,8 @@ const NationalPage = () => {
           const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
             params: { address, electionId: 9000, key: civicAPIKey }
           });
+          console.log('Voter information response:', response.data); 
+
           setVoterInfo(response.data);
         } catch (error) {
           console.error('Error fetching voter information:', error);
@@ -96,7 +100,6 @@ const NationalPage = () => {
     >
       <Container maxWidth="lg" sx={{ paddingY: 8 }}>
         
-        {/* Header */}
         <Box sx={{ textAlign: 'center', marginBottom: '40px' }}>
           <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold' }}>
             National Elections
@@ -106,7 +109,6 @@ const NationalPage = () => {
           </Typography>
         </Box>
 
-        {/* National Representatives */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Your National Representatives
@@ -155,7 +157,6 @@ const NationalPage = () => {
           )}
         </Box>
 
-        {/* Election Information */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             General Election Information
@@ -168,23 +169,21 @@ const NationalPage = () => {
           ) : voterInfo ? (
             <Box>
               <Grid container spacing={4}>
-                {/* Election Information Section */}
                 <Grid item xs={12}>
                   <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
                     <Typography variant="h5" gutterBottom>Election Information</Typography>
-                    <Typography variant="body1"><strong>Election Name:</strong> {voterInfo.election.name}</Typography>
-                    <Typography variant="body1"><strong>Election Day:</strong> {voterInfo.election.electionDay}</Typography>
+                    <Typography variant="body1"><strong>Election Name:</strong> {voterInfo.election?.name || 'N/A'}</Typography>
+                    <Typography variant="body1"><strong>Election Day:</strong> {voterInfo.election?.electionDay || 'N/A'}</Typography>
                   </Paper>
                 </Grid>
 
-                {/* Polling Locations Section */}
                 <Grid item xs={12}>
                   <Typography variant="h5" gutterBottom>Polling Locations</Typography>
                   {voterInfo.pollingLocations?.length > 0 ? (
                     voterInfo.pollingLocations.map((location, index) => (
                       <Paper key={index} sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
-                        <Typography variant="body1"><strong>Location Name:</strong> {location.address.locationName}</Typography>
-                        <Typography variant="body1"><strong>Address:</strong> {location.address.line1}, {location.address.city}, {location.address.state} {location.address.zip}</Typography>
+                        <Typography variant="body1"><strong>Location Name:</strong> {location.address?.locationName || 'N/A'}</Typography>
+                        <Typography variant="body1"><strong>Address:</strong> {location.address?.line1}, {location.address?.city}, {location.address?.state} {location.address?.zip}</Typography>
                         <Typography variant="body1"><strong>Polling Hours:</strong> {location.pollingHours || 'N/A'}</Typography>
                       </Paper>
                     ))
@@ -195,29 +194,28 @@ const NationalPage = () => {
                   )}
                 </Grid>
 
-                {/* Election Administration Section */}
-                {voterInfo.state.map((stateInfo, index) => (
+                {voterInfo.state?.map((stateInfo, index) => (
                   <Grid item xs={12} key={index}>
                     <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
                       <Typography variant="h5" gutterBottom>Election Administration for {stateInfo.name}</Typography>
-                      <Typography variant="body1"><strong>Election Administration Body:</strong> {stateInfo.electionAdministrationBody.name}</Typography>
-                      <Typography variant="body1"><strong>Office Hours:</strong> {stateInfo.electionAdministrationBody.hoursOfOperation}</Typography>
+                      <Typography variant="body1"><strong>Election Administration Body:</strong> {stateInfo.electionAdministrationBody?.name || 'N/A'}</Typography>
+                      <Typography variant="body1"><strong>Office Hours:</strong> {stateInfo.electionAdministrationBody?.hoursOfOperation || 'N/A'}</Typography>
                       <Divider sx={{ my: 2 }} />
                       <Typography variant="h6">Physical Address</Typography>
                       <Typography variant="body2">
-                        <strong>{stateInfo.electionAdministrationBody.physicalAddress.locationName}</strong><br />
-                        {stateInfo.electionAdministrationBody.physicalAddress.line1}, {stateInfo.electionAdministrationBody.physicalAddress.city}, {stateInfo.electionAdministrationBody.physicalAddress.state} {stateInfo.electionAdministrationBody.physicalAddress.zip}
+                        <strong>{stateInfo.electionAdministrationBody?.physicalAddress?.locationName || 'N/A'}</strong><br />
+                        {stateInfo.electionAdministrationBody?.physicalAddress?.line1}, {stateInfo.electionAdministrationBody?.physicalAddress?.city}, {stateInfo.electionAdministrationBody?.physicalAddress?.state} {stateInfo.electionAdministrationBody?.physicalAddress?.zip}
                       </Typography>
                       <Divider sx={{ my: 2 }} />
                       <Typography variant="h6">Useful Links</Typography>
                       <Box component="ul" sx={{ paddingLeft: 2 }}>
                         {[
-                          { label: 'Election Info', url: stateInfo.electionAdministrationBody.electionInfoUrl },
-                          { label: 'Registration Info', url: stateInfo.electionAdministrationBody.electionRegistrationUrl },
-                          { label: 'Registration Confirmation', url: stateInfo.electionAdministrationBody.electionRegistrationConfirmationUrl },
-                          { label: 'Absentee Voting Info', url: stateInfo.electionAdministrationBody.absenteeVotingInfoUrl },
-                          { label: 'Voting Location Finder', url: stateInfo.electionAdministrationBody.votingLocationFinderUrl },
-                          { label: 'Ballot Info', url: stateInfo.electionAdministrationBody.ballotInfoUrl },
+                          { label: 'Election Info', url: stateInfo.electionAdministrationBody?.electionInfoUrl },
+                          { label: 'Registration Info', url: stateInfo.electionAdministrationBody?.electionRegistrationUrl },
+                          { label: 'Registration Confirmation', url: stateInfo.electionAdministrationBody?.electionRegistrationConfirmationUrl },
+                          { label: 'Absentee Voting Info', url: stateInfo.electionAdministrationBody?.absenteeVotingInfoUrl },
+                          { label: 'Voting Location Finder', url: stateInfo.electionAdministrationBody?.votingLocationFinderUrl },
+                          { label: 'Ballot Info', url: stateInfo.electionAdministrationBody?.ballotInfoUrl },
                         ].map((link, linkIndex) => (
                           <li key={linkIndex}>
                             <Link href={link.url} target="_blank" rel="noopener noreferrer" color="#1976d2">
@@ -237,7 +235,6 @@ const NationalPage = () => {
             </Typography>
           )}
         </Box>
-        {/* Public Opinion Polls Section */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Public Opinion Polls
