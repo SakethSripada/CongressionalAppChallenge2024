@@ -331,7 +331,7 @@ const StatePage = () => {
                 {electionData.house.map((candidate, index) => (
                   <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}>
                     <TableCell component="th" scope="row" sx={{ width: '50%' }}>{candidate.name}</TableCell>
-                    <TableCell sx={{ width: '20%' }}>{candidate.party}</TableCell>
+                    <TableCell sx={{ width: '20%' }}>{mapPartyToFullName(candidate.party)}</TableCell>
                     <TableCell sx={{ width: '30%' }}>
                       <Button 
                         variant="outlined" 
@@ -371,7 +371,7 @@ const StatePage = () => {
                 {electionData.senate.map((candidate, index) => (
                   <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}>
                     <TableCell component="th" scope="row" sx={{ width: '50%' }}>{candidate.name}</TableCell>
-                    <TableCell sx={{ width: '20%' }}>{candidate.party}</TableCell>
+                    <TableCell sx={{ width: '20%' }}>{mapPartyToFullName(candidate.party)}</TableCell>
                     <TableCell sx={{ width: '30%' }}>
                       <Button 
                         variant="outlined" 
