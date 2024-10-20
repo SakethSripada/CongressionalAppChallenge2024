@@ -487,7 +487,7 @@ const LocalPage = () => {
               data={demographics.filter(item => item.label === 'Land area (sq mi)').map(item => ({
                 name: item.label,
                 [county]: parseFloat(item.value.split(', ')[0]),
-                [fullStateName]: parseFloat(item.value.split(', ')[1])
+                [fullStateName]: parseFloat(item.value.split(', ')[1]) * 1000
               }))}
               margin={{ top: 20, right: 20, bottom: 50, left: 50 }}
             >
