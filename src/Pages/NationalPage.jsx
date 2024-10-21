@@ -4,7 +4,6 @@ import {
   Typography, 
   Box, 
   Paper, 
-  Button, 
   Table, 
   TableBody, 
   TableCell, 
@@ -13,7 +12,8 @@ import {
   TableRow,
   Divider,
   Grid,
-  Link
+  Link,
+  CircularProgress
 } from '@mui/material';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';  
@@ -27,6 +27,8 @@ const NationalPage = () => {
 
   const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY; 
 
+  const formatStateName = (state) => state.toLowerCase().replace(/\s+/g, '-');
+
   useEffect(() => {
     if (address) {
       const fetchNationalReps = async () => {
@@ -34,7 +36,6 @@ const NationalPage = () => {
           const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
             params: { address, key: civicAPIKey }
           });
-          console.log('National representatives response:', response.data); 
 
           const offices = response.data.offices;
           const officials = response.data.officials;
@@ -57,7 +58,6 @@ const NationalPage = () => {
 
           setNationalReps(national);
         } catch (error) {
-          console.error('Error fetching national representatives:', error);
           setErrorMessage('Error fetching national representatives. Please try again later.');
         }
       };
@@ -74,11 +74,9 @@ const NationalPage = () => {
           const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
             params: { address, electionId: 9000, key: civicAPIKey }
           });
-          console.log('Voter information response:', response.data); 
 
           setVoterInfo(response.data);
         } catch (error) {
-          console.error('Error fetching voter information:', error);
           setErrorMessage(`Error fetching voter information: ${error.message}`);
         } finally {
           setLoading(false);
@@ -100,6 +98,7 @@ const NationalPage = () => {
     >
       <Container maxWidth="lg" sx={{ paddingY: 8 }}>
         
+        {/* Header Section */}
         <Box sx={{ textAlign: 'center', marginBottom: '40px' }}>
           <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold' }}>
             National Elections
@@ -109,6 +108,68 @@ const NationalPage = () => {
           </Typography>
         </Box>
 
+        {/* Presidential and Vice-Presidential Candidates Table */}
+        <Box sx={{ marginBottom: '50px' }}>
+          <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
+            Presidential and Vice-Presidential Candidates
+          </Typography>
+          <TableContainer component={Paper} elevation={3} sx={{ marginTop: 2 }}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#140a35' }}>
+                  <TableCell><strong style={{color: '#f8b231'}}>Position</strong></TableCell>
+                  <TableCell><strong style={{color: '#f8b231'}}>Name</strong></TableCell>
+                  <TableCell><strong style={{color: '#f8b231'}}>Profile</strong></TableCell>
+                  <TableCell><strong style={{color: '#f8b231'}}>Political Party</strong></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>President</TableCell>
+                  <TableCell>Donald Trump</TableCell>
+                  <TableCell>
+                    <Link href="https://ballotpedia.org/Donald_Trump" target="_blank" rel="noopener noreferrer" color="#1976d2">
+                      View Profile
+                    </Link>
+                  </TableCell>
+                  <TableCell>Republican</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Vice President</TableCell>
+                  <TableCell>J.D. Vance</TableCell>
+                  <TableCell>
+                    <Link href="https://ballotpedia.org/J.D._Vance" target="_blank" rel="noopener noreferrer" color="#1976d2">
+                      View Profile
+                    </Link>
+                  </TableCell>
+                  <TableCell>Republican</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>President</TableCell>
+                  <TableCell>Kamala Harris</TableCell>
+                  <TableCell>
+                    <Link href="https://ballotpedia.org/Kamala_Harris" target="_blank" rel="noopener noreferrer" color="#1976d2">
+                      View Profile
+                    </Link>
+                  </TableCell>
+                  <TableCell>Democrat</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Vice President</TableCell>
+                  <TableCell>Tim Walz</TableCell>
+                  <TableCell>
+                    <Link href="https://ballotpedia.org/Tim_Walz" target="_blank" rel="noopener noreferrer" color="#1976d2">
+                      View Profile
+                    </Link>
+                  </TableCell>
+                  <TableCell>Democrat</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+
+        {/* National Representatives Section */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Your National Representatives
@@ -117,32 +178,26 @@ const NationalPage = () => {
             <TableContainer component={Paper} elevation={3} sx={{ marginTop: 2 }}>
               <Table>
                 <TableHead>
-                <TableRow sx={{ backgroundColor: '#140a35' }}>
-                  <TableCell><strong style={{color: '#f8b231'}}>Office</strong></TableCell>
-                  <TableCell><strong style={{color: '#f8b231'}}>Name</strong></TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: '30%' }}>
-                      <strong style={{color: '#f8b231'}}>Party</strong>
-                    </Box>
-                  </TableCell>
-                  <TableCell><Box sx={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: '30%' }}>
-                      <strong style={{color: '#f8b231'}}>Phone</strong>
-                    </Box></TableCell>
-                  <TableCell align="right"><strong style={{color: '#f8b231'}}>Website</strong></TableCell>
-                </TableRow>
+                  <TableRow sx={{ backgroundColor: '#140a35' }}>
+                    <TableCell><strong style={{color: '#f8b231'}}>Office</strong></TableCell>
+                    <TableCell><strong style={{color: '#f8b231'}}>Name</strong></TableCell>
+                    <TableCell><strong style={{color: '#f8b231'}}>Party</strong></TableCell>
+                    <TableCell><strong style={{color: '#f8b231'}}>Phone</strong></TableCell>
+                    <TableCell align="right"><strong style={{color: '#f8b231'}}>Website</strong></TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {nationalReps.map((rep, index) => (
                     <TableRow key={index}>
                       <TableCell>{rep.office}</TableCell>
                       <TableCell>{rep.name}</TableCell>
-                      <TableCell align="right">{rep.party}</TableCell>
-                      <TableCell align="right">{rep.phone}</TableCell>
+                      <TableCell>{rep.party}</TableCell>
+                      <TableCell>{rep.phone}</TableCell>
                       <TableCell align="right">
                         {rep.website ? (
-                          <a href={rep.website} target="_blank" rel="noopener noreferrer">
+                          <Link href={rep.website} target="_blank" rel="noopener noreferrer" color="#1976d2">
                             {rep.website}
-                          </a>
+                          </Link>
                         ) : 'N/A'}
                       </TableCell>
                     </TableRow>
@@ -157,6 +212,7 @@ const NationalPage = () => {
           )}
         </Box>
 
+        {/* General Election Information */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             General Election Information
@@ -164,7 +220,7 @@ const NationalPage = () => {
           
           {loading ? (
             <Box display="flex" justifyContent="center" alignItems="center" height="100px">
-              <Typography variant="body1" color="text.secondary">Loading voter information...</Typography>
+              <CircularProgress />
             </Box>
           ) : voterInfo ? (
             <Box>
@@ -235,16 +291,39 @@ const NationalPage = () => {
             </Typography>
           )}
         </Box>
+
+        {/* Polling Section */}
         <Box sx={{ marginBottom: '50px' }}>
           <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
             Public Opinion Polls
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Track the latest public opinion polls to see how candidates are performing nationally.
+            Track the latest public opinion polls to see how candidates are performing nationally and at the state level.
           </Typography>
-          <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-            View Detailed Polls
-          </Button>
+          
+          {/* National Poll Embed */}
+          <Box sx={{ mt: 2 }}>
+            <iframe
+              src="https://projects.fivethirtyeight.com/polls/president-general/2024/national/"
+              width="100%"
+              height="500"
+              style={{ border: 'none' }}
+              title="National Polls"
+            />
+          </Box>
+
+          {/* State-Specific Poll Embed */}
+          {address && voterInfo && voterInfo.state && (
+            <Box sx={{ mt: 4 }}>
+              <iframe
+                src={`https://projects.fivethirtyeight.com/polls/president-general/2024/${formatStateName(voterInfo.state[0]?.name)}`}
+                width="100%"
+                height="500"
+                style={{ border: 'none' }}
+                title="State Polls"
+              />
+            </Box>
+          )}
         </Box>
       </Container>
     </Box>
