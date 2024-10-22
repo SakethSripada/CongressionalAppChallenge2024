@@ -92,6 +92,25 @@ const NationalPage = () => {
 
   return (
     <Box sx={{ position: 'relative', width: '100%', minHeight: '100vh', py: 8, overflow: 'hidden' }}>
+      <video
+        autoPlay
+        loop
+        muted
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',  
+          height: '100%', 
+          objectFit: 'cover', 
+          zIndex: -1,
+          filter: 'blur(2px)',
+          opacity: '0.7'
+        }}
+      >
+        <source src="/videos/national_background.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <Container maxWidth="lg" sx={{ py: 8, pt: 10, position: 'relative' }}>
         <Typography
           variant="h2"
