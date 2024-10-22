@@ -30,6 +30,7 @@ def get_wikipedia_bio(name, role):
         if paragraph.text.strip():
             cleaned_text = re.sub(r'\[\d+\]', '', paragraph.text)
             cleaned_text = cleaned_text.replace('"', '').replace("'", '')
+            cleaned_text = re.sub(r'(\w+)ss\b', r"\1s's", cleaned_text)
             bio += cleaned_text.strip() + "\n"
             
 
