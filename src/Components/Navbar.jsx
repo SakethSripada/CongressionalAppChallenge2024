@@ -43,7 +43,7 @@ const Navbar = () => {
   const [manualAddress, setManualAddress] = useState('');
   const [showArrow, setShowArrow] = useState(true);
 
-  const { setAddress } = useContext(AddressContext);
+  const { address, setAddress } = useContext(AddressContext);
   const geocodingAPIKey = process.env.REACT_APP_GEOCODING_API_KEY;
 
   useEffect(() => {
@@ -51,6 +51,13 @@ const Navbar = () => {
     const timer = setTimeout(() => setShowArrow(false), 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const storedAddress = localStorage.getItem('userAddress');
+    if (storedAddress) {
+      setAddress(storedAddress);
+    }
+  }, [setAddress]);
 
   const handleLocationClick = () => {
     setShowArrow(false); // Hide the arrow once the button is clicked
@@ -71,6 +78,7 @@ const Navbar = () => {
               const formattedAddress = results[0].formatted_address;
               if (formattedAddress) {
                 setAddress(formattedAddress);
+                localStorage.setItem('userAddress', formattedAddress);
                 setSnackbarMessage(`Location acquired: ${formattedAddress}`);
                 setSnackbarOpen(true);
               } else {
@@ -224,6 +232,11 @@ const Navbar = () => {
             <IconButton color="inherit" onClick={handleLocationClick}>
               <LocationOnIcon />
             </IconButton>
+            {address && (
+              <Typography variant="body2" sx={{ mr: 2 }}>
+                {address.length > 25 ? address.substring(0, 25) + '...' : address}
+              </Typography>
+            )}
             <IconButton color="inherit" onClick={() => setDrawerOpen(true)}>
               <MenuIcon />
             </IconButton>

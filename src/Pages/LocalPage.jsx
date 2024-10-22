@@ -92,61 +92,61 @@ const LocalPage = () => {
 
   useEffect(() => {
     if (address) {
-      const fetchLocalReps = async () => {
-        setLoading(true); 
-        console.log('Fetching local representatives for address:', address);
-        
-        try {
-          const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
-            params: { address, key: civicAPIKey }
-          });
-
-          console.log('Local representatives response:', response.data);
-
-          const offices = response.data.offices;
-          const officials = response.data.officials;
-          const local = [];
-
-          offices.forEach((office) => {
-            if (office.levels && office.levels.includes('administrativeArea2')) { 
-              office.officialIndices.forEach((index) => {
-                const official = officials[index];
-                local.push({
-                  office: office.name,
-                  name: official.name,
-                  party: official.party || 'N/A',
-                  phone: official.phones ? official.phones[0] : 'N/A',
-                  website: official.urls ? official.urls[0] : 'N/A'
-                });
-              });
-            }
-          });
-
-          console.log('Extracted local representatives:', local);
-          setLocalReps(local);
-          setErrorMessage('');
-
-          const { county, state } = extractStateAndCounty(response.data);
-          console.log('Extracted County:', county);
-          console.log('Extracted State:', state);
-
-          if (county && state) {
-            console.log('Fetching municipal candidates for County:', county, 'State:', state);
-            await fetchMunicipalCandidates(county, state);
-          } else {
-            console.warn('County or State is undefined. Municipal candidates will not be fetched.');
-          }
-        } catch (error) {
-          console.error('Error fetching local representatives:', error);
-          setErrorMessage('Error fetching local representatives. Please try again later.');
-        } finally {
-          setLoading(false); 
-        }
-      };
-
       fetchLocalReps();
     }
   }, [address, civicAPIKey]);
+
+  const fetchLocalReps = async () => {
+    setLoading(true); 
+    console.log('Fetching local representatives for address:', address);
+    
+    try {
+      const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
+        params: { address, key: civicAPIKey }
+      });
+
+      console.log('Local representatives response:', response.data);
+
+      const offices = response.data.offices;
+      const officials = response.data.officials;
+      const local = [];
+
+      offices.forEach((office) => {
+        if (office.levels && office.levels.includes('administrativeArea2')) { 
+          office.officialIndices.forEach((index) => {
+            const official = officials[index];
+            local.push({
+              office: office.name,
+              name: official.name,
+              party: official.party || 'N/A',
+              phone: official.phones ? official.phones[0] : 'N/A',
+              website: official.urls ? official.urls[0] : 'N/A'
+            });
+          });
+        }
+      });
+
+      console.log('Extracted local representatives:', local);
+      setLocalReps(local);
+      setErrorMessage('');
+
+      const { county, state } = extractStateAndCounty(response.data);
+      console.log('Extracted County:', county);
+      console.log('Extracted State:', state);
+
+      if (county && state) {
+        console.log('Fetching municipal candidates for County:', county, 'State:', state);
+        await fetchMunicipalCandidates(county, state);
+      } else {
+        console.warn('County or State is undefined. Municipal candidates will not be fetched.');
+      }
+    } catch (error) {
+      console.error('Error fetching local representatives:', error);
+      setErrorMessage('Error fetching local representatives. Please try again later.');
+    } finally {
+      setLoading(false); 
+    }
+  };
 
   const extractStateAndCounty = (data) => {
     const divisions = data.divisions;
