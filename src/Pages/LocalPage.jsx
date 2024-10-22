@@ -365,7 +365,7 @@ const LocalPage = () => {
       color: '#fff',
     }}
   >
-    Municipal Candidates
+    Municipal Elections
   </Typography>
 
   {Object.keys(candidatesByElection).length > 0 ? (
