@@ -1,307 +1,371 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow,
-  Divider,
+import {
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent,
   Grid,
+  Chip,
   Link,
-  CircularProgress
+  Divider,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
 } from '@mui/material';
 import axios from 'axios';
-import { AddressContext } from '../Context/AddressContext';  
+import { AddressContext } from '../Context/AddressContext';
+import InfoIcon from '@mui/icons-material/Info';
+
+// Helper function to format state names
+const formatStateName = (state) => state.toLowerCase().replace(/\s+/g, '-');
 
 const NationalPage = () => {
-  const { address } = useContext(AddressContext);  
+  const { address } = useContext(AddressContext);
   const [nationalReps, setNationalReps] = useState([]);
-  const [voterInfo, setVoterInfo] = useState(null);  
-  const [errorMessage, setErrorMessage] = useState('');  
-  const [loading, setLoading] = useState(true);  
-
-  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY; 
-
-  const formatStateName = (state) => state.toLowerCase().replace(/\s+/g, '-');
+  const [voterInfo, setVoterInfo] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;
 
   useEffect(() => {
     if (address) {
-      const fetchNationalReps = async () => {
-        try {
-          const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
-            params: { address, key: civicAPIKey }
-          });
-
-          const offices = response.data.offices;
-          const officials = response.data.officials;
-          const national = [];
-
-          offices.forEach((office) => {
-            if (office.levels && office.levels.includes('country')) { 
-              office.officialIndices.forEach((index) => {
-                const official = officials[index];
-                national.push({
-                  office: office.name,
-                  name: official.name,
-                  party: official.party || 'N/A',
-                  phone: official.phones ? official.phones[0] : 'N/A',
-                  website: official.urls ? official.urls[0] : 'N/A'
-                });
-              });
-            }
-          });
-
-          setNationalReps(national);
-        } catch (error) {
-          setErrorMessage('Error fetching national representatives. Please try again later.');
-        }
-      };
-
       fetchNationalReps();
-    }
-  }, [address, civicAPIKey]);
-
-  useEffect(() => {
-    if (address) {
-      const fetchVoterInfo = async () => {
-        try {
-          setLoading(true);
-          const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
-            params: { address, electionId: 9000, key: civicAPIKey }
-          });
-
-          setVoterInfo(response.data);
-        } catch (error) {
-          setErrorMessage(`Error fetching voter information: ${error.message}`);
-        } finally {
-          setLoading(false);
-        }
-      };
-
       fetchVoterInfo();
     }
   }, [address]);
 
-  return (
-    <Box
-      sx={{
-        background: 'linear-gradient(to right, rgba(255, 102, 102, 0.5), rgba(255, 255, 255, 0.5), rgba(102, 153, 255, 0.5))',
-        minHeight: '100vh',
-        py: 8,
-        fontFamily: "'Roboto', sans-serif",
-      }}
-    >
-      <Container maxWidth="lg" sx={{ paddingY: 8 }}>
-        
-        {/* Header Section */}
-        <Box sx={{ textAlign: 'center', marginBottom: '40px' }}>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-            National Elections
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Explore the latest national election results, opinion polls, and political analysis.
-          </Typography>
-        </Box>
+  const fetchNationalReps = async () => {
+    try {
+      const response = await axios.get(`https://www.googleapis.com/civicinfo/v2/representatives`, {
+        params: { address, key: civicAPIKey },
+      });
 
-        {/* Presidential and Vice-Presidential Candidates Table */}
-        <Box sx={{ marginBottom: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
-            Presidential and Vice-Presidential Candidates
-          </Typography>
-          <TableContainer component={Paper} elevation={3} sx={{ marginTop: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#140a35' }}>
-                  <TableCell><strong style={{color: '#f8b231'}}>Position</strong></TableCell>
-                  <TableCell><strong style={{color: '#f8b231'}}>Name</strong></TableCell>
-                  <TableCell><strong style={{color: '#f8b231'}}>Profile</strong></TableCell>
-                  <TableCell><strong style={{color: '#f8b231'}}>Political Party</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>President</TableCell>
-                  <TableCell>Donald Trump</TableCell>
-                  <TableCell>
-                    <Link href="https://ballotpedia.org/Donald_Trump" target="_blank" rel="noopener noreferrer" color="#1976d2">
-                      View Profile
-                    </Link>
-                  </TableCell>
-                  <TableCell>Republican</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Vice President</TableCell>
-                  <TableCell>J.D. Vance</TableCell>
-                  <TableCell>
-                    <Link href="https://ballotpedia.org/J.D._Vance" target="_blank" rel="noopener noreferrer" color="#1976d2">
-                      View Profile
-                    </Link>
-                  </TableCell>
-                  <TableCell>Republican</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>President</TableCell>
-                  <TableCell>Kamala Harris</TableCell>
-                  <TableCell>
-                    <Link href="https://ballotpedia.org/Kamala_Harris" target="_blank" rel="noopener noreferrer" color="#1976d2">
-                      View Profile
-                    </Link>
-                  </TableCell>
-                  <TableCell>Democrat</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Vice President</TableCell>
-                  <TableCell>Tim Walz</TableCell>
-                  <TableCell>
-                    <Link href="https://ballotpedia.org/Tim_Walz" target="_blank" rel="noopener noreferrer" color="#1976d2">
-                      View Profile
-                    </Link>
-                  </TableCell>
-                  <TableCell>Democrat</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+      const offices = response.data.offices;
+      const officials = response.data.officials;
+      const national = [];
+
+      offices.forEach((office) => {
+        if (office.levels && office.levels.includes('country')) {
+          office.officialIndices.forEach((index) => {
+            const official = officials[index];
+            national.push({
+              office: office.name,
+              name: official.name,
+              party: official.party || 'N/A',
+              phone: official.phones ? official.phones[0] : 'N/A',
+              website: official.urls ? official.urls[0] : 'N/A',
+            });
+          });
+        }
+      });
+
+      setNationalReps(national);
+    } catch (error) {
+      setErrorMessage('Error fetching national representatives. Please try again later.');
+    }
+  };
+
+  const fetchVoterInfo = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('https://www.googleapis.com/civicinfo/v2/voterinfo', {
+        params: { address, electionId: 9000, key: civicAPIKey },
+      });
+
+      setVoterInfo(response.data);
+    } catch (error) {
+      setErrorMessage(`Error fetching voter information: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{ position: 'relative', width: '100%', minHeight: '100vh', py: 8, overflow: 'hidden' }}>
+      <Container maxWidth="lg" sx={{ py: 8, pt: 10, position: 'relative' }}>
+        <Typography
+          variant="h2"
+          component="h1"
+          gutterBottom
+          align="center"
+          sx={{ fontWeight: 900, color: '#333', fontFamily: "'Playfair Display', serif", fontSize: { xs: '3rem', md: '4.5rem' } }}
+        >
+          National Elections
+        </Typography>
+        <Typography
+          variant="h5"
+          align="center"
+          color="text.secondary"
+          paragraph
+          sx={{ color: 'rgba(0, 0, 0, 0.8)', fontFamily: "'Roboto', sans-serif", fontWeight: 300 }}
+        >
+          Explore the latest national election results, opinion polls, and political analysis.
+        </Typography>
 
         {/* National Representatives Section */}
-        <Box sx={{ marginBottom: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
+        <Box sx={{ mt: 8 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'secondary.main', fontWeight: 'bold', mb: 4 }}>
             Your National Representatives
           </Typography>
-          {nationalReps.length > 0 ? (
-            <TableContainer component={Paper} elevation={3} sx={{ marginTop: 2 }}>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#140a35' }}>
-                    <TableCell><strong style={{color: '#f8b231'}}>Office</strong></TableCell>
-                    <TableCell><strong style={{color: '#f8b231'}}>Name</strong></TableCell>
-                    <TableCell><strong style={{color: '#f8b231'}}>Party</strong></TableCell>
-                    <TableCell><strong style={{color: '#f8b231'}}>Phone</strong></TableCell>
-                    <TableCell align="right"><strong style={{color: '#f8b231'}}>Website</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {nationalReps.map((rep, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{rep.office}</TableCell>
-                      <TableCell>{rep.name}</TableCell>
-                      <TableCell>{rep.party}</TableCell>
-                      <TableCell>{rep.phone}</TableCell>
-                      <TableCell align="right">
-                        {rep.website ? (
-                          <Link href={rep.website} target="_blank" rel="noopener noreferrer" color="#1976d2">
-                            {rep.website}
-                          </Link>
-                        ) : 'N/A'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-              No national representatives found for the provided address.
-            </Typography>
-          )}
+          <Grid container spacing={4}>
+            {nationalReps.length > 0 ? (
+              nationalReps.map((rep, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card
+                    sx={{
+                      borderRadius: '10px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)' },
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    }}
+                  >
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: '#333' }}>
+                        {rep.name}
+                      </Typography>
+                      <Chip
+                        label={rep.party}
+                        color="secondary"
+                        size="small"
+                        sx={{ mb: 2, fontFamily: "'Roboto', sans-serif" }}
+                      />
+                      <Typography color="text.secondary" gutterBottom sx={{ fontFamily: "'Roboto', sans-serif" }}>
+                        {rep.office}
+                      </Typography>
+                      <Typography variant="body2" paragraph sx={{ fontFamily: "'Roboto', sans-serif" }}>
+                        Phone: {rep.phone}
+                      </Typography>
+                      <Link
+                        href={rep.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ color: 'primary.main', textDecoration: 'underline', fontFamily: "'Roboto', sans-serif" }}
+                      >
+                        Official Website
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))
+            ) : (
+              <Grid item xs={12}>
+                <Typography variant="body1" color="text.secondary" align="center" sx={{ fontFamily: "'Roboto', sans-serif" }}>
+                  No national representatives found for the provided address.
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
         </Box>
 
-        {/* General Election Information */}
-        <Box sx={{ marginBottom: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
-            General Election Information
+        {/* National Election Table and Voter Information */}
+        <Box sx={{ mt: 8 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', fontWeight: 'bold', mb: 4 }}>
+            Election Candidates and Voter Information
           </Typography>
-          
-          {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100px">
-              <CircularProgress />
-            </Box>
-          ) : voterInfo ? (
-            <Box>
-              <Grid container spacing={4}>
-                <Grid item xs={12}>
-                  <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
-                    <Typography variant="h5" gutterBottom>Election Information</Typography>
-                    <Typography variant="body1"><strong>Election Name:</strong> {voterInfo.election?.name || 'N/A'}</Typography>
-                    <Typography variant="body1"><strong>Election Day:</strong> {voterInfo.election?.electionDay || 'N/A'}</Typography>
-                  </Paper>
-                </Grid>
+          <Grid container spacing={4}>
+            {/* Left Column: Presidential Candidates */}
+            <Grid item xs={12} md={7}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, color: 'secondary.main' }}>
+                Presidential and Vice-Presidential Candidates
+              </Typography>
+              <TableContainer component={Paper} elevation={3} sx={{ mb: 4 }}>
+                <Table sx={{ minWidth: 650 }} aria-label="presidential elections table">
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: 'primary.light' }}>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Position</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Candidate</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Party</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>More Info</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {[
+                      { position: 'President', name: 'Donald Trump', party: 'Republican', link: 'https://ballotpedia.org/Donald_Trump' },
+                      { position: 'Vice President', name: 'J.D. Vance', party: 'Republican', link: 'https://ballotpedia.org/J.D._Vance' },
+                      { position: 'President', name: 'Kamala Harris', party: 'Democrat', link: 'https://ballotpedia.org/Kamala_Harris' },
+                      { position: 'Vice President', name: 'Tim Walz', party: 'Democrat', link: 'https://ballotpedia.org/Tim_Walz' },
+                    ].map((candidate, index) => (
+                      <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}>
+                        <TableCell>{candidate.position}</TableCell>
+                        <TableCell>{candidate.name}</TableCell>
+                        <TableCell>{candidate.party}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            href={candidate.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<InfoIcon />}
+                          >
+                            More Info
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
 
-                <Grid item xs={12}>
-                  <Typography variant="h5" gutterBottom>Polling Locations</Typography>
-                  {voterInfo.pollingLocations?.length > 0 ? (
-                    voterInfo.pollingLocations.map((location, index) => (
-                      <Paper key={index} sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
-                        <Typography variant="body1"><strong>Location Name:</strong> {location.address?.locationName || 'N/A'}</Typography>
-                        <Typography variant="body1"><strong>Address:</strong> {location.address?.line1}, {location.address?.city}, {location.address?.state} {location.address?.zip}</Typography>
-                        <Typography variant="body1"><strong>Polling Hours:</strong> {location.pollingHours || 'N/A'}</Typography>
-                      </Paper>
-                    ))
-                  ) : (
-                    <Typography variant="body1" color="text.secondary">
-                      No polling locations available.
-                    </Typography>
-                  )}
-                </Grid>
-
-                {voterInfo.state?.map((stateInfo, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Paper sx={{ padding: '16px', marginBottom: '16px', boxShadow: 3 }}>
-                      <Typography variant="h5" gutterBottom>Election Administration for {stateInfo.name}</Typography>
-                      <Typography variant="body1"><strong>Election Administration Body:</strong> {stateInfo.electionAdministrationBody?.name || 'N/A'}</Typography>
-                      <Typography variant="body1"><strong>Office Hours:</strong> {stateInfo.electionAdministrationBody?.hoursOfOperation || 'N/A'}</Typography>
-                      <Divider sx={{ my: 2 }} />
-                      <Typography variant="h6">Physical Address</Typography>
-                      <Typography variant="body2">
-                        <strong>{stateInfo.electionAdministrationBody?.physicalAddress?.locationName || 'N/A'}</strong><br />
-                        {stateInfo.electionAdministrationBody?.physicalAddress?.line1}, {stateInfo.electionAdministrationBody?.physicalAddress?.city}, {stateInfo.electionAdministrationBody?.physicalAddress?.state} {stateInfo.electionAdministrationBody?.physicalAddress?.zip}
+            {/* Right Column: Voter Information */}
+            <Grid item xs={12} md={5}>
+              <Paper sx={{ p: 4 }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    mb: 3,
+                    color: 'primary.main',
+                    borderBottom: '2px solid',
+                    borderColor: 'primary.main',
+                    pb: 2,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Voter Information
+                </Typography>
+                {loading ? (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: 100,
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                ) : voterInfo ? (
+                  <List>
+                    <ListItem>
+                      <ListItemText
+                        primary={
+                          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                            Election Name
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography component="span" variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                            {voterInfo.election?.name || 'N/A'}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText
+                        primary={
+                          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                            Election Day
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography component="span" variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                            {voterInfo.election?.electionDay || 'N/A'}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                    <Divider sx={{ my: 2 }} />
+                    {voterInfo.pollingLocations?.length > 0 ? (
+                      voterInfo.pollingLocations.map((location, index) => (
+                        <React.Fragment key={index}>
+                          <ListItem>
+                            <ListItemText
+                              primary={
+                                <Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                  Location: {location.address?.locationName || 'N/A'}
+                                </Typography>
+                              }
+                              secondary={
+                                <Typography component="span" variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                                  Address: {location.address?.line1}, {location.address?.city}, {location.address?.state} {location.address?.zip}
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                          {index < voterInfo.pollingLocations.length - 1 && <Divider sx={{ my: 2 }} />}
+                        </React.Fragment>
+                      ))
+                    ) : (
+                      <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
+                        No polling locations available.
                       </Typography>
-                      <Divider sx={{ my: 2 }} />
-                      <Typography variant="h6">Useful Links</Typography>
-                      <Box component="ul" sx={{ paddingLeft: 2 }}>
-                        {[
-                          { label: 'Election Info', url: stateInfo.electionAdministrationBody?.electionInfoUrl },
-                          { label: 'Registration Info', url: stateInfo.electionAdministrationBody?.electionRegistrationUrl },
-                          { label: 'Registration Confirmation', url: stateInfo.electionAdministrationBody?.electionRegistrationConfirmationUrl },
-                          { label: 'Absentee Voting Info', url: stateInfo.electionAdministrationBody?.absenteeVotingInfoUrl },
-                          { label: 'Voting Location Finder', url: stateInfo.electionAdministrationBody?.votingLocationFinderUrl },
-                          { label: 'Ballot Info', url: stateInfo.electionAdministrationBody?.ballotInfoUrl },
-                        ].map((link, linkIndex) => (
-                          <li key={linkIndex}>
-                            <Link href={link.url} target="_blank" rel="noopener noreferrer" color="#1976d2">
-                              {link.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </Box>
-                    </Paper>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-          ) : (
-            <Typography variant="body1" color="error">
-              {errorMessage || 'No voter information available for the given address.'}
-            </Typography>
-          )}
+                    )}
+                    <Divider sx={{ my: 2 }} />
+                    {voterInfo.state?.map((stateInfo, index) => (
+                      <React.Fragment key={index}>
+                        <ListItem>
+                          <ListItemText
+                            primary={
+                              <Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                Election Administration for {stateInfo.name}
+                              </Typography>
+                            }
+                            secondary={
+                              <Box>
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                  <strong>Administration Body:</strong> {stateInfo.electionAdministrationBody?.name || 'N/A'}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                  <strong>Office Hours:</strong> {stateInfo.electionAdministrationBody?.hoursOfOperation || 'N/A'}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                  <strong>Physical Address:</strong> {stateInfo.electionAdministrationBody?.physicalAddress?.line1}, {stateInfo.electionAdministrationBody?.physicalAddress?.city}, {stateInfo.electionAdministrationBody?.physicalAddress?.state} {stateInfo.electionAdministrationBody?.physicalAddress?.zip}
+                                </Typography>
+                                <Divider sx={{ my: 2 }} />
+                                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                  <strong>Useful Links:</strong>
+                                </Typography>
+                                <Box component="ul" sx={{ paddingLeft: 2, mt: 1 }}>
+                                  {[
+                                    { label: 'Election Info', url: stateInfo.electionAdministrationBody?.electionInfoUrl },
+                                    { label: 'Registration Info', url: stateInfo.electionAdministrationBody?.electionRegistrationUrl },
+                                    { label: 'Registration Confirmation', url: stateInfo.electionAdministrationBody?.electionRegistrationConfirmationUrl },
+                                    { label: 'Absentee Voting Info', url: stateInfo.electionAdministrationBody?.absenteeVotingInfoUrl },
+                                    { label: 'Voting Location Finder', url: stateInfo.electionAdministrationBody?.votingLocationFinderUrl },
+                                    { label: 'Ballot Info', url: stateInfo.electionAdministrationBody?.ballotInfoUrl },
+                                  ].map((link, linkIndex) => (
+                                    <li key={linkIndex}>
+                                      <Link href={link.url} target="_blank" rel="noopener noreferrer" color="primary.main">
+                                        {link.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </Box>
+                              </Box>
+                            }
+                          />
+                        </ListItem>
+                        {index < voterInfo.state.length - 1 && <Divider sx={{ my: 2 }} />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                ) : (
+                  <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+                    {errorMessage || 'No voter information available for the given address.'}
+                  </Typography>
+                )}
+              </Paper>
+            </Grid>
+          </Grid>
         </Box>
 
         {/* Polling Section */}
-        <Box sx={{ marginBottom: '50px' }}>
-          <Typography variant="h4" gutterBottom sx={{ color: '#1976d2', fontWeight: 'bold', borderBottom: '2px solid #1976d2', display: 'inline-block', pb: 1 }}>
+        <Box sx={{ mt: 8 }}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'secondary.main', fontWeight: 'bold', mb: 4 }}>
             Public Opinion Polls
           </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            Track the latest public opinion polls to see how candidates are performing nationally and at the state level.
-          </Typography>
-          
-          {/* National Poll Embed */}
           <Box sx={{ mt: 2 }}>
             <iframe
               src="https://projects.fivethirtyeight.com/polls/president-general/2024/national/"
@@ -311,8 +375,6 @@ const NationalPage = () => {
               title="National Polls"
             />
           </Box>
-
-          {/* State-Specific Poll Embed */}
           {address && voterInfo && voterInfo.state && (
             <Box sx={{ mt: 4 }}>
               <iframe
