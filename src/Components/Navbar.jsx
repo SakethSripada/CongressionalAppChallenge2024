@@ -47,7 +47,7 @@ const Navbar = () => {
   const geocodingAPIKey = process.env.REACT_APP_GEOCODING_API_KEY;
 
   useEffect(() => {
-    // Auto-hide the arrow after 5 seconds
+  
     const timer = setTimeout(() => setShowArrow(false), 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -60,7 +60,7 @@ const Navbar = () => {
   }, [setAddress]);
 
   const handleLocationClick = () => {
-    setShowArrow(false); // Hide the arrow once the button is clicked
+    setShowArrow(false); 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {

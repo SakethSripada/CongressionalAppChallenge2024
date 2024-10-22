@@ -24,3 +24,7 @@ yarn-error.log*
 my-backend/__pycache__/senate_scraper.cpython-313.pyc
 my-backend/__pycache__/municipal_scraper.cpython-313.pyc
 my-backend/__pycache__/house_scraper.cpython-313.pyc
+my-backend/__pycache__/house_scraper.cpython-313.pyc
+my-backend/__pycache__/municipal_scraper.cpython-313.pyc
+my-backend/__pycache__/senate_scraper.cpython-313.pyc
+my-backend/__pycache__/wiki.cpython-313.pyc

@@ -3,6 +3,7 @@ from flask_cors import CORS
 from house_scraper import scrape_house_candidates
 from senate_scraper import scrape_senate_candidates, scrape_voter_info
 from municipal_scraper import scrape_municipal_candidates  
+from wiki import get_wikipedia_bio
 
 app = Flask(__name__)
 CORS(app)  
@@ -47,6 +48,21 @@ def get_municipal_candidates():
         return jsonify(results)  
     except Exception as e:
         print(f"Error fetching municipal candidates: {str(e)}")  
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/candidate_bio', methods=['GET'])
+def get_candidate_bio():
+    name = request.args.get('name')
+    role = request.args.get('role')
+    if not name or not role:
+        return jsonify({'error': 'Candidate name and role are required'}), 400
+
+    try:
+        bio_data = get_wikipedia_bio(name, role)
+        return jsonify(bio_data)
+    except Exception as e:
+        print(f"Error fetching candidate bio: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

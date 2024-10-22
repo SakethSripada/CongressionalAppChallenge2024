@@ -56,7 +56,7 @@ def scrape_municipal_candidates(county, state):
     for candidate in candidates:
         print(f"Name: {candidate['name']}, Party: {candidate['party']}, Link: {candidate['link']}, Election: {candidate['election']}")  # Debug statement
 
-    # Scrape demographics
+    
     demographics = []
     demographics_table = soup.find('table', class_='census-table-widget')
     if demographics_table:

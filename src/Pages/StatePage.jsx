@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Grid, Paper, Table, TableHead, TableRow, TableCell, Link, TableBody, TableContainer, Button, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { Container, Typography, Box, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Grid, Paper, Table, TableHead, TableRow, TableCell, Link, TableBody, TableContainer, Button, List, ListItem, ListItemText, Divider, Drawer, Avatar } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';
@@ -58,6 +58,10 @@ const StatePage = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [municipalCandidates, setMunicipalCandidates] = useState([]);
+  const [selectedBio, setSelectedBio] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedName, setSelectedName] = useState('');
 
   const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;
 
@@ -193,6 +197,24 @@ const StatePage = () => {
     return `${name} (${fullPartyName})`;
   };
 
+  const fetchCandidateBio = async (name, role) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/candidate_bio`, {
+        params: { name, role }
+      });
+      setSelectedBio(response.data.bio);
+      setSelectedImage(response.data.image_url);
+      setSelectedName(name);
+      setDrawerOpen(true);
+    } catch (error) {
+      console.error('Error fetching candidate bio:', error);
+      setSelectedBio('Biography not available.');
+      setSelectedImage('');
+      setSelectedName(name);
+      setDrawerOpen(true);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -242,7 +264,11 @@ const StatePage = () => {
             <CircularProgress />
           ) : stateReps.length > 0 ? (
             stateReps.map((rep, index) => (
-              <RepRow key={index}>
+              <RepRow 
+                key={index}
+                onClick={() => fetchCandidateBio(rep.name, rep.office)}
+                sx={{ cursor: 'pointer' }}
+              >
                 <RepColumn>
                   <Typography variant="h6" sx={{ fontWeight: 700, color: '#333' }}>{rep.name}</Typography>
                   <Typography variant="body2" sx={{ color: '#666' }}>{rep.party}</Typography>
@@ -308,7 +334,14 @@ const StatePage = () => {
               </TableHead>
               <TableBody>
                 {electionData.house.map((candidate, index) => (
-                  <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}>
+                  <TableRow 
+                    key={index} 
+                    sx={{ 
+                      '&:nth-of-type(odd)': { backgroundColor: 'action.hover' },
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => fetchCandidateBio(candidate.name, 'Representative')}
+                  >
                     <TableCell component="th" scope="row" sx={{ width: '50%' }}>{candidate.name}</TableCell>
                     <TableCell sx={{ width: '20%' }}>{mapPartyToFullName(candidate.party)}</TableCell>
                     <TableCell sx={{ width: '30%' }}>
@@ -348,7 +381,14 @@ const StatePage = () => {
               </TableHead>
               <TableBody>
                 {electionData.senate.map((candidate, index) => (
-                  <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'action.hover' } }}>
+                  <TableRow 
+                    key={index} 
+                    sx={{ 
+                      '&:nth-of-type(odd)': { backgroundColor: 'action.hover' },
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => fetchCandidateBio(candidate.name, 'Senator')}
+                  >
                     <TableCell component="th" scope="row" sx={{ width: '50%' }}>{candidate.name}</TableCell>
                     <TableCell sx={{ width: '20%' }}>{mapPartyToFullName(candidate.party)}</TableCell>
                     <TableCell sx={{ width: '30%' }}>
@@ -413,6 +453,24 @@ const StatePage = () => {
 </StyledPaper>
 
       </Container>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{ '& .MuiDrawer-paper': { width: { xs: '100%', sm: 400 } } }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom>{selectedName}</Typography>
+          {selectedImage && (
+            <Avatar
+              src={selectedImage}
+              alt={selectedName}
+              sx={{ width: 200, height: 200, mb: 2, mx: 'auto' }}
+            />
+          )}
+          <Typography variant="body1">{selectedBio}</Typography>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

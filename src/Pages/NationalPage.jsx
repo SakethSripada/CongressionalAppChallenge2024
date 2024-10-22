@@ -21,12 +21,13 @@ import {
   TableRow,
   Paper,
   Button,
+  Drawer,
+  Avatar,
 } from '@mui/material';
 import axios from 'axios';
 import { AddressContext } from '../Context/AddressContext';
 import InfoIcon from '@mui/icons-material/Info';
 
-// Helper function to format state names
 const formatStateName = (state) => state.toLowerCase().replace(/\s+/g, '-');
 
 const NationalPage = () => {
@@ -36,6 +37,10 @@ const NationalPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const civicAPIKey = process.env.REACT_APP_CIVIC_API_KEY;
+  const [selectedBio, setSelectedBio] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedName, setSelectedName] = useState('');
 
   useEffect(() => {
     if (address) {
@@ -87,6 +92,24 @@ const NationalPage = () => {
       setErrorMessage(`Error fetching voter information: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCandidateBio = async (name, role) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/candidate_bio`, {
+        params: { name, role }
+      });
+      setSelectedBio(response.data.bio);
+      setSelectedImage(response.data.image_url);
+      setSelectedName(name);
+      setDrawerOpen(true);
+    } catch (error) {
+      console.error('Error fetching candidate bio:', error);
+      setSelectedBio('Biography not available.');
+      setSelectedImage('');
+      setSelectedName(name);
+      setDrawerOpen(true);
     }
   };
 
@@ -147,7 +170,10 @@ const NationalPage = () => {
                       transition: 'transform 0.3s, box-shadow 0.3s',
                       '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)' },
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      cursor: 'pointer',
                     }}
+                    elevation={0}
+                    onClick={() => fetchCandidateBio(rep.name, 'Representative')}
                   >
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, color: '#333' }}>
@@ -407,6 +433,24 @@ const NationalPage = () => {
           )}
         </Box>
       </Container>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{ '& .MuiDrawer-paper': { width: { xs: '100%', sm: 400 } } }}
+      >
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h5" gutterBottom>{selectedName}</Typography>
+          {selectedImage && (
+            <Avatar
+              src={selectedImage}
+              alt={selectedName}
+              sx={{ width: 200, height: 200, mb: 2, mx: 'auto' }}
+            />
+          )}
+          <Typography variant="body1">{selectedBio}</Typography>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

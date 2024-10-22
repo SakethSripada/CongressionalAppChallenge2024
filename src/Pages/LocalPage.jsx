@@ -18,6 +18,12 @@ import {
   Paper,
   TableContainer,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Drawer,
+  Avatar,
 } from '@mui/material';
 import { AddressContext } from '../Context/AddressContext';  
 import axios from 'axios';
@@ -291,6 +297,7 @@ const LocalPage = () => {
                         boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
                       },
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      cursor: 'default',
                     }}
                     elevation={0}
                   >
@@ -398,6 +405,7 @@ const LocalPage = () => {
                     boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
                   },
                   backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  cursor: 'default',
                 }}
                 elevation={0}
               >

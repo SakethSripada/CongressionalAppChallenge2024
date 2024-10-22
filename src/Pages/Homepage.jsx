@@ -7,9 +7,9 @@ import EmailSignup from '../Components/EmailSignup';
 const Homepage = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // New state for error handling
+  const [error, setError] = useState(null); 
 
-  // Fetch U.S. election news from non-paywalled sources using NewsAPI
+  
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -22,7 +22,7 @@ const Homepage = () => {
           return;
         }
 
-        // List of neutral, non-paywalled, reputable sources for U.S. election news
+        
         const nonPaywalledSources = [
           'reuters', 
           'associated-press', 
@@ -38,7 +38,7 @@ const Homepage = () => {
           'marketwatch'
         ].join(',');
 
-        // API request for US election news from trusted, non-paywalled sources
+        
         console.log('Fetching news from NewsAPI...');
         const response = await axios.get(
           `https://newsapi.org/v2/everything?q="us+elections"&language=en&sortBy=publishedAt&sources=${nonPaywalledSources}&apiKey=${apiKey}`
@@ -51,7 +51,7 @@ const Homepage = () => {
           return;
         }
 
-        // Filter to remove duplicates based solely on titles
+        
         const uniqueArticles = [];
         const seenTitles = new Set();
 
