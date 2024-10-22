@@ -105,7 +105,7 @@ const NationalPage = () => {
           objectFit: 'cover', 
           zIndex: -1,
           filter: 'blur(2px)',
-          opacity: '0.7'
+          opacity: '0.5'
         }}
       >
         <source src="/videos/national_background.mp4" type="video/mp4" />
