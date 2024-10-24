@@ -1,70 +1,31 @@
-# Getting Started with Create React App
+# CivicCompass Voting App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+CivicCompass is a voting application designed to provide easy access to critical election information at the local, state, and national levels across the United States. The app primarily aims to assist new voters who might feel overwhelmed by the abundance of election-related details spread across multiple sites. It simplifies the process by presenting relevant information in one place. However, it is also a valuable resource for youth, non-voters, and anyone interested in staying up-to-date with political developments.
 
-## Available Scripts
+## Key Features
 
-In the project directory, you can run:
+### Localized Election Information
+CivicCompass aggregates election details from various sources, offering information tailored to users' specific locations. This includes information on upcoming elections, candidate profiles, and voting dates.
 
-### `npm start`
+### Email Notifications
+Using an Express API, CivicCompass integrates the **Nodemailer** library to schedule and send email reminders to users. These notifications provide countdowns to election days and highlight critical reminders to help users stay informed.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Ballotpedia Integration
+The app scrapes information from **Ballotpedia** to offer comprehensive details about the 2024 elections:
+1. **URL Building:** CivicCompass dynamically builds Ballotpedia URLs based on location parameters such as state and district.
+2. **Web Scraping:** The app uses Python’s **BeautifulSoup** to extract essential election-related content from the HTML of the Ballotpedia page.
+3. **Geolocation Data:** By sending user coordinates to **Google's Geocoding API**, the app retrieves precise address information that is then fed into the web scraper to refine election details based on the user's location.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Visualizations with Recharts
+The app uses the **Recharts** library to create interactive charts and graphs that present demographic data, making complex election data easier to understand and more engaging.
 
-### `npm test`
+### CivicAPI Integration
+CivicCompass connects to the **Google Civic Information API** to offer users location-specific information about representatives and voting, providing a comprehensive view of their civic landscape.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Biography Display
+CivicCompass fetches representative biographies from Wikipedia when users click on a card
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### User Interface
+The app utilizes **Material UI** for a modern and responsive design:
+- **Cards** are used to organize election information neatly.
+- Various components ensure a seamless user experience across devices.
