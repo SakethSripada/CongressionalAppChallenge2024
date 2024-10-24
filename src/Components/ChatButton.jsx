@@ -4,7 +4,6 @@ import ChatIcon from '@mui/icons-material/Chat';
 
 const ChatButton = () => {
   const openChat = () => {
-    console.log('Chat button clicked');
   };
 
   return (
