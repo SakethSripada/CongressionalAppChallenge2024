@@ -1,4 +1,4 @@
-# CivicCompass Voting App
+# CivicCompass Election Information App
 
 CivicCompass is a voting application designed to provide easy access to critical election information at the local, state, and national levels across the United States. The app primarily aims to assist new voters who might feel overwhelmed by the abundance of election-related details spread across multiple sites. It simplifies the process by presenting relevant information in one place. However, it is also a valuable resource for youth, non-voters, and anyone interested in staying up-to-date with political developments.
 
