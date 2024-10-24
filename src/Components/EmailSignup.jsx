@@ -10,7 +10,7 @@ const EmailSignup = () => {
   const handleSignup = async () => {
     try {
       console.log('Sending request to API:', { email, zipCode });
-      const response = await axios.post('http://localhost:5000/api/send-election-reminder', { email, zipCode });
+      const response = await axios.post('http://localhost:8080/api/send-election-reminder', { email, zipCode });
       console.log('API response:', response.data);
       setMessage(response.data.message || 'Thank you for signing up!');
     } catch (error) {

@@ -5,8 +5,18 @@ const cron = require('node-cron');
 const app = express();
 
 app.use(express.json());
-app.use(cors());
 
+// Enable CORS with specific origin
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true,
+}));
+
+// Explicitly handle preflight requests
+app.options('/api/send-election-reminder', cors());
+
+// Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -15,6 +25,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Helper function to calculate days until the election
 const daysUntilElection = () => {
   const electionDate = new Date('2024-11-05');
   const today = new Date();
@@ -22,6 +33,7 @@ const daysUntilElection = () => {
   return Math.ceil(difference / (1000 * 60 * 60 * 24));
 };
 
+// Generate the email content
 const generateEmailContent = () => {
   return `
     <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; color: #333;">
@@ -54,7 +66,8 @@ const generateEmailContent = () => {
   `;
 };
 
-app.post('/api/send-election-reminder', async (req, res) => {
+// Route to send election reminder email
+app.post('/api/send-election-reminder', (req, res) => {
   const { email } = req.body;
   console.log('Received request to send email to:', email);
 
@@ -75,6 +88,7 @@ app.post('/api/send-election-reminder', async (req, res) => {
   });
 });
 
+// Scheduled emails every Tuesday at 9 AM
 cron.schedule('0 9 * * 2', () => {
   const emailList = ['user1@example.com', 'user2@example.com'];
 
@@ -97,6 +111,6 @@ cron.schedule('0 9 * * 2', () => {
   console.log('Weekly election reminders sent to all users!');
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
+// Start server on port 6000
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

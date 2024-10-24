@@ -232,11 +232,7 @@ const Navbar = () => {
             <IconButton color="inherit" onClick={handleLocationClick}>
               <LocationOnIcon />
             </IconButton>
-            {address && (
-              <Typography variant="body2" sx={{ mr: 2 }}>
-                {address.length > 25 ? address.substring(0, 25) + '...' : address}
-              </Typography>
-            )}
+            
             <IconButton color="inherit" onClick={() => setDrawerOpen(true)}>
               <MenuIcon />
             </IconButton>
